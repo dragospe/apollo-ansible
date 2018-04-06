@@ -18,18 +18,25 @@ localhost  ansible_connection=local
 # apollo-scripts-test ansible_host=192.0.2.53
 # apollo-oauth        ansible_host=192.0.2.50
 # apollo-scripts      ansible_host=192.0.2.52
+# [dev]
+# localhost
 # [test]
 # apollo-oauth-test
 # apollo-scripts-test
+# rds-test
 # [prod]
 # apollo-oauth
 # apollo-scripts
+# rds
 # [oauth]
 # apollo-oauth-test
 # apollo-oauth
 # [scripts]
 # apollo-scripts-test
 # apollo-scripts
+# [databases]
+# rds-test
+# rds
 
 ## green.example.com
 ## blue.example.com
