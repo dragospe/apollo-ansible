@@ -10,6 +10,27 @@
 
 # Ex 1: Ungrouped hosts, specify before any group headers.
 
+#localhost
+localhost  ansible_connection=local
+
+# # TODO:
+# apollo-oauth-test   ansible_host=192.0.2.51
+# apollo-scripts-test ansible_host=192.0.2.53
+# apollo-oauth        ansible_host=192.0.2.50
+# apollo-scripts      ansible_host=192.0.2.52
+# [test]
+# apollo-oauth-test
+# apollo-scripts-test
+# [prod]
+# apollo-oauth
+# apollo-scripts
+# [oauth]
+# apollo-oauth-test
+# apollo-oauth
+# [scripts]
+# apollo-scripts-test
+# apollo-scripts
+
 ## green.example.com
 ## blue.example.com
 ## 192.168.100.1
