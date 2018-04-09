@@ -1,72 +1,33 @@
-# This is the default ansible 'hosts' file.
-#
+# This is the ansible 'hosts' file.
 # It should live in /etc/ansible/hosts
-#
-#   - Comments begin with the '#' character
-#   - Blank lines are ignored
-#   - Groups of hosts are delimited by [header] elements
-#   - You can enter hostnames or ip addresses
-#   - A hostname/ip can be a member of multiple groups
 
-# Ex 1: Ungrouped hosts, specify before any group headers.
+localhost           ansible_connection=local
+apollo-oauth-test   ansible_host=18.220.182.219  ansible_user=centos
+# apollo-scripts-test ansible_host=192.0.2.53  ansible_user=centos
+# apollo-oauth        ansible_host=192.0.2.50  ansible_user=centos
+# apollo-scripts      ansible_host=192.0.2.52  ansible_user=centos
 
-#localhost
-localhost  ansible_connection=local
+[dev]
+localhost
 
-# # TODO:
-# apollo-oauth-test   ansible_host=192.0.2.51
-# apollo-scripts-test ansible_host=192.0.2.53
-# apollo-oauth        ansible_host=192.0.2.50
-# apollo-scripts      ansible_host=192.0.2.52
-# [dev]
-# localhost
-# [test]
-# apollo-oauth-test
+[test]
+apollo-oauth-test
 # apollo-scripts-test
 # rds-test
-# [prod]
+
+[prod]
 # apollo-oauth
 # apollo-scripts
 # rds
-# [oauth]
-# apollo-oauth-test
+
+[oauth]
+apollo-oauth-test
 # apollo-oauth
-# [scripts]
+
+[scripts]
 # apollo-scripts-test
 # apollo-scripts
-# [databases]
+
+[databases]
 # rds-test
 # rds
-
-## green.example.com
-## blue.example.com
-## 192.168.100.1
-## 192.168.100.10
-
-# Ex 2: A collection of hosts belonging to the 'webservers' group
-
-## [webservers]
-## alpha.example.org
-## beta.example.org
-## 192.168.1.100
-## 192.168.1.110
-
-# If you have multiple hosts following a pattern you can specify
-# them like this:
-
-## www[001:006].example.com
-
-# Ex 3: A collection of database servers in the 'dbservers' group
-
-## [dbservers]
-## 
-## db01.intranet.mydomain.net
-## db02.intranet.mydomain.net
-## 10.25.1.56
-## 10.25.1.57
-
-# Here's another example of host ranges, this time there are no
-# leading 0s:
-
-## db-[99:101]-node.example.com
-
