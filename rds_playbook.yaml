@@ -5,16 +5,19 @@
   tasks:
   - name: get facts about an RDS instance
     rds:
+      aws_access_key: TKTKTKTKTKTKTKTKTKTK
+      aws_secret_key: TKTKTKTKTKTKTKTKTKTKTKTKTKTKTKTKTKTKTKTK
       command: facts
+      db_name: apollo
       instance_name: apollo-rds-test
+      port: 5429
+      region: us-east-2
+      zone: us-east-2a
       # apply_immediately:
-      # aws_access_key:
-      # aws_secret_key:
       # backup_retention:
       # backup_window:
       # character_set_name:
       # db_engine:
-      # db_name:
       # ec2_url:
       # engine_version:
       # force_failover:
@@ -27,10 +30,8 @@
       # option_group:
       # parameter_group:
       # password:
-      # port:
       # profile:
       # publicly_accessible:
-      # region: us-east-2
       # security_groups:
       # security_token:
       # size: 100
@@ -44,7 +45,6 @@
       # vpc_security_groups:
       # wait:
       # wait_timeout:
-      # zone:
     register: new_database_facts
   - debug:
       var: new_database_facts
