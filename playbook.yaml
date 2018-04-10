@@ -13,6 +13,14 @@
   #     src: /srv/httpd.j2
   #     dest: /etc/httpd.conf
 
+- hosts: all
+  tasks:
+  - name: ensure postgres client is installed
+    package:
+      name: "{{ 'postgresql' if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
+      state: present
+    become: yes
+
 # TODO: latest version for test, pinned to some "latest working" for prod
 
 # - hosts: databases
