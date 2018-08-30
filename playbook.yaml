@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: commandline
   tasks:
   - name: install EPEL (if redhat)
     package:
@@ -11,9 +11,11 @@
   - name: install commonly-used software
     package:
       name:
+        - git
         - emacs
         - htop
         - "{{ 'postgresql' if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
+        - "{{ 'bind-utils' if ansible_os_family == 'RedHat' else 'dnsutils' }}"
       state: present
     become: yes
 
@@ -44,23 +46,108 @@
     hostname:
       name: "{{ inventory_hostname }}"
     become: yes
+  # - name: install ddclient
+  #   # TODO: configure+start it
+  #   package:
+  #     name:
+  #       - ddclient
+  #     state: present
+  #   become: yes
 
-- hosts: oauth
-  # remote_user: centos
-  # become: yes
+- hosts: scripts
   tasks:
-  - name: ensure apache is at the latest version
-    yum:
-      name: httpd
-      state: latest
+  - name: add grafana repository
+    yum_repository:
+      name: grafana
+      description: grafana repo
+      # enabled: yes
+      baseurl: https://packagecloud.io/grafana/stable/el/7/$basearch
+      repo_gpgcheck: yes
+      gpgcheck: yes
+      gpgkey: 'https://packagecloud.io/gpg.key https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana'
+      # TODO: import the packagecloud key.  see https://github.com/ansible/ansible/issues/20711
+      sslverify: yes
+      sslcacert: /etc/pki/tls/certs/ca-bundle.crt
     become: yes
-  # - name: write the apache config file
-  #   template:
-  #     src: /srv/httpd.j2
-  #     dest: /etc/httpd.conf
-  #   - name: ensure that postgresql is started
-  #     service:
-  #       name: postgresql
-  #       state: started
+  - name: install grafana
+    package:
+      name:
+        - grafana
+      state: present
+    become: yes
+  # TODO: grafana setup, tls, dns, etc.
+  - name: download s3fs
+    git:
+      repo: https://github.com/s3fs-fuse/s3fs-fuse.git
+      dest: /home/alex/code/s3fs-fuse
+    become: yes
+    become_user: alex
+  - name: install s3fs prereqs (redhat)
+    package:
+      name:
+        - automake
+        - fuse
+        - fuse-devel
+        - gcc-c++
+        - git
+        - libcurl-devel
+        - libxml2-devel
+        - make
+        - openssl-devel
+      state: present
+    become: yes
+    when: ansible_os_family == 'RedHat'
+  - name: install s3fs prereqs (debian)
+    package:
+      name:
+        - automake
+        - autotools-dev
+        - fuse
+        - g++
+        - git
+        - libcurl4-openssl-dev
+        - libfuse-dev
+        - libssl-dev
+        - libxml2-dev
+        - make
+        - pkg-config
+      state: present
+    become: yes
+    when: ansible_os_family == 'Debian'
+  - name: compile s3fs
+    command: "{{ item }}"
+    with_items:
+      - ./autogen.sh
+      - ./configure
+      - make
+    args:
+      chdir: /home/alex/code/s3fs-fuse
+      creates: /home/alex/code/s3fs-fuse/src/s3fs
+    become: yes
+    become_user: alex
+  - name: install s3fs
+    command: make install
+    args:
+      chdir: /home/alex/code/s3fs-fuse
+      creates: /usr/local/bin/s3fs
+    become: yes
+
+# - hosts: oauth
+#   # remote_user: centos
+#   # become: yes
+#   tasks:
+#   - name: ensure apache is at the latest version
+#     yum:
+#       name: httpd
+#       state: latest
+#     become: yes
+#   # - name: write the apache config file
+#   #   template:
+#   #     src: /srv/httpd.j2
+#   #     dest: /etc/httpd.conf
+#   #   - name: ensure that postgresql is started
+#   #     service:
+#   #       name: postgresql
+#   #       state: started
 
 # TODO: latest version of stuff for test, pinned to some "latest working" for prod
