@@ -1,4 +1,50 @@
 ---
+- hosts: all
+  tasks:
+  - name: install EPEL (if redhat)
+    package:
+      name:
+        - epel-release
+      state: present
+    become: yes
+    when: ansible_os_family == 'RedHat'
+  - name: install commonly-used software
+    package:
+      name:
+        - emacs
+        - htop
+        - "{{ 'postgresql' if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
+      state: present
+    become: yes
+
+- hosts: remote
+  tasks:
+  - name: create a group for Alex
+    group:
+      name: alex
+      state: present
+    become: yes
+  - name: create an account for Alex
+    user:
+      name: alex
+      shell: /bin/bash
+      password: '$6$cMOXifgpL$1YACgk72wHGm1Y8NzEt63sFjswMNQtw7JLO5g8G0rP55al9kBc4rEZETay2y08Jf0WRC5/FAG4Bdu5DE8sB7.1'
+      # (use `mkpasswd --method=sha-512` to create password)
+      groups: "alex,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
+      append: yes
+      create_home: yes
+    become: yes
+  - name: authorize ssh key for Alex
+    authorized_key:
+      user: alex
+      state: present
+      key: "{{ lookup('file', '/home/alex/.ssh/id_rsa_urmc_aws.pub') }}"
+    become: yes
+  - name: set hostname
+    hostname:
+      name: "{{ inventory_hostname }}"
+    become: yes
+
 - hosts: oauth
   # remote_user: centos
   # become: yes
@@ -12,25 +58,9 @@
   #   template:
   #     src: /srv/httpd.j2
   #     dest: /etc/httpd.conf
+  #   - name: ensure that postgresql is started
+  #     service:
+  #       name: postgresql
+  #       state: started
 
-- hosts: all
-  tasks:
-  - name: ensure postgres client is installed
-    package:
-      name: "{{ 'postgresql' if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
-      state: present
-    become: yes
-
-# TODO: latest version for test, pinned to some "latest working" for prod
-
-# - hosts: databases
-#   remote_user: root
-#   tasks:
-#   - name: ensure postgresql is at the latest version
-#     yum:
-#       name: postgresql
-#       state: latest
-#   - name: ensure that postgresql is started
-#     service:
-#       name: postgresql
-#       state: started
+# TODO: latest version of stuff for test, pinned to some "latest working" for prod

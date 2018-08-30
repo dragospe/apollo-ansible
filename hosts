@@ -2,17 +2,23 @@
 # It should live in /etc/ansible/hosts
 
 localhost           ansible_connection=local
-apollo-oauth-test   ansible_host=18.220.182.219  ansible_user=centos
-# apollo-scripts-test ansible_host=192.0.2.53  ansible_user=centos
+apollo-scripts-test ansible_host=172.17.176.77  ansible_user=centos
+# apollo-oauth-test   ansible_host=18.220.182.219  ansible_user=centos
 # apollo-oauth        ansible_host=192.0.2.50  ansible_user=centos
 # apollo-scripts      ansible_host=192.0.2.52  ansible_user=centos
 
 [dev]
 localhost
 
+[remote]
+apollo-scripts-test
+# apollo-oauth-test
+# apollo-scripts
+# apollo-oauth
+
 [test]
-apollo-oauth-test
-# apollo-scripts-test
+apollo-scripts-test
+# apollo-oauth-test
 # rds-test
 
 [prod]
@@ -21,11 +27,11 @@ apollo-oauth-test
 # rds
 
 [oauth]
-apollo-oauth-test
+# apollo-oauth-test
 # apollo-oauth
 
 [scripts]
-# apollo-scripts-test
+apollo-scripts-test
 # apollo-scripts
 
 [databases]
