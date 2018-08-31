@@ -57,9 +57,9 @@
     mode: 0640
   become: yes
   become_user: alex
-  # TODO: reuse for apollo_qol_survey
 
-# TODO: apollo_db/secrets.py.  note: different file for dev/test/prod.
+# TODO: apollo_db/secrets.py.  note: different file for dev/test/prod because
+# they point to different database servers.
 
 ############################## CIED report parser ##############################
 
@@ -69,6 +69,65 @@
     repo_url: git@bitbucket.org:atpage/medtronic_pdf.git
     key_file: /home/alex/.ssh/id_rsa_apollo
 
-################################################################################
+############################## QOL survey manager ##############################
 
-# TODO: apollo_qol_survey with crontab, selenium, secrets, etc.
+- name: copy Chrome RPM to server
+  copy:
+    src: /home/alex/code/apollo_ansible/bin/google-chrome-stable_current_x86_64.rpm
+    dest: /tmp/google-chrome-stable_current_x86_64.rpm
+    mode: 0644
+    force: no
+
+- name: install Chrome
+  yum:
+    name: /tmp/google-chrome-stable_current_x86_64.rpm
+    state: present
+  become: yes
+
+- name: copy selenium chrome driver to server
+  copy:
+    src: /home/alex/code/apollo_ansible/bin/chromedriver
+    dest: /usr/local/bin/chromedriver
+    mode: 0755
+    force: no
+  become: yes
+
+# TODO: ensure chrome and webdriver versions are compatible
+
+- name: download REDCap QOL selenium code
+  git:
+    repo: git@bitbucket.org:atpage/redcap_qol_hacks.git
+    dest: /home/alex/code/redcap_qol_hacks
+    key_file: /home/alex/.ssh/id_rsa_apollo
+  become: yes
+  become_user: alex
+
+- name: copy REDCap token
+  copy:
+    src: /home/alex/code/apollo_ansible/secrets/redcap_secrets.py
+    dest: /home/alex/code/redcap_qol_hacks/redcap_secrets.py
+    owner: alex
+    group: alex
+    mode: 0640
+  become: yes
+  become_user: alex
+
+- name: copy my URMC creds for selenium to use
+  copy:
+    src: /home/alex/code/apollo_ansible/secrets/urmc_creds.py
+    dest: /home/alex/code/redcap_qol_hacks/secrets.py
+    owner: alex
+    group: alex
+    mode: 0640
+  become: yes
+  become_user: alex
+
+# TODO: test mode on test/dev server that doesn't actually do anything to
+# REDCap... only prod should be running.  (how to _test_ it then?  the problem
+# is we don't have a test REDCap.)
+
+# TODO: crontab
+# 0  16    *   *   *   xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d
+# 5  16    *   *   *   xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r
+
+################################################################################
