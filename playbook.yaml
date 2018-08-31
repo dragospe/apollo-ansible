@@ -21,27 +21,7 @@
 
 - hosts: remote
   tasks:
-  - name: create a group for Alex
-    group:
-      name: alex
-      state: present
-    become: yes
-  - name: create an account for Alex
-    user:
-      name: alex
-      shell: /bin/bash
-      password: '$6$cMOXifgpL$1YACgk72wHGm1Y8NzEt63sFjswMNQtw7JLO5g8G0rP55al9kBc4rEZETay2y08Jf0WRC5/FAG4Bdu5DE8sB7.1'
-      # (use `mkpasswd --method=sha-512` to create password)
-      groups: "alex,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
-      append: yes
-      create_home: yes
-    become: yes
-  - name: authorize ssh key for Alex
-    authorized_key:
-      user: alex
-      state: present
-      key: "{{ lookup('file', '/home/alex/.ssh/id_rsa_urmc_aws.pub') }}"
-    become: yes
+  - import_tasks: alex_account.yaml
   - name: set hostname
     hostname:
       name: "{{ inventory_hostname }}"
@@ -76,61 +56,7 @@
       state: present
     become: yes
   # TODO: grafana setup, tls, dns, etc.
-  - name: download s3fs
-    git:
-      repo: https://github.com/s3fs-fuse/s3fs-fuse.git
-      dest: /home/alex/code/s3fs-fuse
-    become: yes
-    become_user: alex
-  - name: install s3fs prereqs (redhat)
-    package:
-      name:
-        - automake
-        - fuse
-        - fuse-devel
-        - gcc-c++
-        - git
-        - libcurl-devel
-        - libxml2-devel
-        - make
-        - openssl-devel
-      state: present
-    become: yes
-    when: ansible_os_family == 'RedHat'
-  - name: install s3fs prereqs (debian)
-    package:
-      name:
-        - automake
-        - autotools-dev
-        - fuse
-        - g++
-        - git
-        - libcurl4-openssl-dev
-        - libfuse-dev
-        - libssl-dev
-        - libxml2-dev
-        - make
-        - pkg-config
-      state: present
-    become: yes
-    when: ansible_os_family == 'Debian'
-  - name: compile s3fs
-    command: "{{ item }}"
-    with_items:
-      - ./autogen.sh
-      - ./configure
-      - make
-    args:
-      chdir: /home/alex/code/s3fs-fuse
-      creates: /home/alex/code/s3fs-fuse/src/s3fs
-    become: yes
-    become_user: alex
-  - name: install s3fs
-    command: make install
-    args:
-      chdir: /home/alex/code/s3fs-fuse
-      creates: /usr/local/bin/s3fs
-    become: yes
+  - import_tasks: s3fs.yaml
 
 # - hosts: oauth
 #   # remote_user: centos

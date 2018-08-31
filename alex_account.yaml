@@ -1,0 +1,21 @@
+- name: create a group for Alex
+  group:
+    name: alex
+    state: present
+  become: yes
+- name: create an account for Alex
+  user:
+    name: alex
+    shell: /bin/bash
+    password: '$6$cMOXifgpL$1YACgk72wHGm1Y8NzEt63sFjswMNQtw7JLO5g8G0rP55al9kBc4rEZETay2y08Jf0WRC5/FAG4Bdu5DE8sB7.1'
+    # (use `mkpasswd --method=sha-512` to create password)
+    groups: "alex,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
+    append: yes
+    create_home: yes
+  become: yes
+- name: authorize ssh key for Alex
+  authorized_key:
+    user: alex
+    state: present
+    key: "{{ lookup('file', '/home/alex/.ssh/id_rsa_urmc_aws.pub') }}"
+  become: yes
