@@ -40,7 +40,17 @@
     repo_url: git@bitbucket.org:atpage/geneactiv.git
     key_file: /home/alex/.ssh/id_rsa_apollo
 
+# TODO: compile page parser, install python prereqs like progressbar, matplotlib
+
 ################################## APOLLO DB ###################################
+
+- name: install sqlalchemy
+  pip:
+    name: sqlalchemy
+    executable: pip3
+  become: yes
+# TODO: that should be done automatically as a prereq of apollo_db
+# ('install_requires ...' in setup.py)
 
 - include_tasks: py_clone_install.yaml
   vars:
@@ -69,6 +79,8 @@
     repo_url: git@bitbucket.org:atpage/medtronic_pdf.git
     key_file: /home/alex/.ssh/id_rsa_apollo
 
+# TODO: ensure commandline PDF reader is installed
+
 ############################## QOL survey manager ##############################
 
 - name: copy Chrome RPM to server
@@ -93,6 +105,12 @@
   become: yes
 
 # TODO: ensure chrome and webdriver versions are compatible
+
+- name: pip install selenium
+  pip:
+    name: selenium
+    executable: pip3
+  become: yes
 
 - name: download REDCap QOL selenium code
   git:
@@ -122,11 +140,18 @@
   become: yes
   become_user: alex
 
+- name: install Xvfb
+  package:
+    name:
+      - "{{ 'xorg-x11-server-Xvfb' if ansible_os_family == 'RedHat' else 'xvfb' }}"
+    state: present
+  become: yes
+
 # TODO: test mode on test/dev server that doesn't actually do anything to
 # REDCap... only prod should be running.  (how to _test_ it then?  the problem
 # is we don't have a test REDCap.)
 
-# TODO: crontab
+# TODO: crontab.  need NTP + timezone first.
 # 0  16    *   *   *   xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d
 # 5  16    *   *   *   xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r
 
