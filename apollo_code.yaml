@@ -1,0 +1,74 @@
+
+################################### Prereqs: ###################################
+
+- name: place APOLLO ssh key
+  copy:
+    src: /home/alex/code/apollo_ansible/keys/id_rsa_apollo
+    dest: /home/alex/.ssh/id_rsa_apollo
+    owner: alex
+    group: alex
+    mode: 0600
+  become: yes
+  become_user: alex
+
+- name: add bitbucket RSA key
+  known_hosts:
+    name: bitbucket.org
+    key: "bitbucket.org,18.205.93.1 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw=="
+  become: yes
+  become_user: alex
+
+################################ REDCap API lib ################################
+
+- include_tasks: py_clone_install.yaml
+  vars:
+    repo_name: redcapi
+    repo_url: git@bitbucket.org:atpage/redcapi.git
+    key_file: /home/alex/.ssh/id_rsa_apollo
+
+############################### GENEActiv stuff ################################
+
+- include_tasks: py_clone_install.yaml
+  vars:
+    repo_name: actigraph
+    repo_url: git@bitbucket.org:atpage/actigraph.git
+    key_file: /home/alex/.ssh/id_rsa_apollo
+
+- include_tasks: py_clone_install.yaml
+  vars:
+    repo_name: geneactiv
+    repo_url: git@bitbucket.org:atpage/geneactiv.git
+    key_file: /home/alex/.ssh/id_rsa_apollo
+
+################################## APOLLO DB ###################################
+
+- include_tasks: py_clone_install.yaml
+  vars:
+    repo_name: apollo_db
+    repo_url: git@bitbucket.org:atpage/apollo_db.git
+    key_file: /home/alex/.ssh/id_rsa_apollo
+
+- name: copy REDCap token
+  copy:
+    src: /home/alex/code/apollo_ansible/secrets/redcap_secrets.py
+    dest: /home/alex/code/apollo_db/loaders/redcap_secrets.py
+    owner: alex
+    group: alex
+    mode: 0640
+  become: yes
+  become_user: alex
+  # TODO: reuse for apollo_qol_survey
+
+# TODO: apollo_db/secrets.py.  note: different file for dev/test/prod.
+
+############################## CIED report parser ##############################
+
+- include_tasks: py_clone_install.yaml
+  vars:
+    repo_name: medtronic_pdf
+    repo_url: git@bitbucket.org:atpage/medtronic_pdf.git
+    key_file: /home/alex/.ssh/id_rsa_apollo
+
+################################################################################
+
+# TODO: apollo_qol_survey with crontab, selenium, secrets, etc.

@@ -1,0 +1,15 @@
+
+- name: "download {{repo_name}} code"
+  git:
+    repo: "{{repo_url}}"
+    dest: "/home/alex/code/{{repo_name}}"
+    key_file: "{{key_file}}"
+  become: yes
+  become_user: alex
+
+- name: "pip3 install {{repo_name}}"
+  command: pip3 install -e .
+  args:
+    chdir: "/home/alex/code/{{repo_name}}"
+    creates: "/home/alex/code/{{repo_name}}/{{repo_name}}.egg-info/PKG-INFO"
+  become: yes
