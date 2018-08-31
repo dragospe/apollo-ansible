@@ -14,10 +14,17 @@
         - git
         - emacs
         - htop
+        - ntp
         - "{{ 'postgresql'   if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
         - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
         - "{{ 'python34-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
       state: present
+    become: yes
+  - name: enable ntpd
+    service:
+      name: "{{ 'ntpd'  if ansible_os_family == 'RedHat' else 'ntp' }}"
+      enabled: yes
+      state: started
     become: yes
 
 - hosts: remote
@@ -26,6 +33,10 @@
   - name: set hostname
     hostname:
       name: "{{ inventory_hostname }}"
+    become: yes
+  - name: set timezone
+    timezone:
+      name: America/New_York
     become: yes
   # - name: install ddclient
   #   # TODO: configure+start it

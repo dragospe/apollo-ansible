@@ -73,13 +73,17 @@
 
 ############################## CIED report parser ##############################
 
+- name: install PDF utils
+  package:
+    name: poppler-utils
+    state: present
+  become: yes
+
 - include_tasks: py_clone_install.yaml
   vars:
-    repo_name: medtronic_pdf
+    repo_name: medtronic_pdf_parser
     repo_url: git@bitbucket.org:atpage/medtronic_pdf.git
     key_file: /home/alex/.ssh/id_rsa_apollo
-
-# TODO: ensure commandline PDF reader is installed
 
 ############################## QOL survey manager ##############################
 
@@ -104,7 +108,8 @@
     force: no
   become: yes
 
-# TODO: ensure chrome and webdriver versions are compatible
+# TODO: ensure chrome and webdriver versions are compatible (i.e. don't let
+# someone update chrome and break the webdriver)
 
 - name: pip install selenium
   pip:
@@ -151,8 +156,20 @@
 # REDCap... only prod should be running.  (how to _test_ it then?  the problem
 # is we don't have a test REDCap.)
 
-# TODO: crontab.  need NTP + timezone first.
-# 0  16    *   *   *   xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d
-# 5  16    *   *   *   xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r
+# TODO (only on prod):
+# - name: send surveys daily
+#   cron:
+#     name: daily QOL surveys
+#     user: alex
+#     job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d"
+#     minute: 0
+#     hour: 16
+# - name: send surveys weekly
+#   cron:
+#     name: weekly QOL surveys
+#     user: alex
+#     job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r"
+#     minute: 5
+#     hour: 16
 
 ################################################################################
