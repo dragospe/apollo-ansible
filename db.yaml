@@ -1,0 +1,111 @@
+
+#################### First part: create database and users #####################
+
+- name: pip install psycopg2
+  pip:
+    name: psycopg2
+    executable: "{{ item }}"
+  with_items:
+    - pip2
+    - pip3
+  become: yes
+
+- name: create APOLLO postgres user
+  postgresql_user:
+    name: APOLLO
+    password: sukS6rCM9WY3p6Kj
+    encrypted: yes
+    no_password_changes: yes  # TODO: only on RDS?
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+
+- name: create grafana postgres user
+  postgresql_user:
+    name: grafana
+    password: grafana-db-pw
+    encrypted: yes
+    no_password_changes: yes  # TODO: only on RDS?
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+
+- name: create APOLLO database
+  postgresql_db:
+    name: "APOLLO-{{ db_mode }}"
+    # TODO?: restore some saved state e.g. for testing
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+
+- name: give APOLLO user full access to APOLLO database
+  postgresql_privs:
+    type: database
+    database: "APOLLO-{{ db_mode }}"
+    privs: ALL
+    objs: "APOLLO-{{ db_mode }}"
+    roles: APOLLO
+    grant_option: no
+    state: present
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+
+- name: give grafana user read-only access to APOLLO database
+  postgresql_privs:
+    type: table
+    database: "APOLLO-{{ db_mode }}"
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+    roles: grafana
+    grant_option: no
+    state: present
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+  # TODO?: need to refresh as schema changes
+
+- name: give grafana user TEMP privs on APOLLO database
+  postgresql_privs:
+    type: database
+    database: "APOLLO-{{ db_mode }}"
+    privs: TEMP
+    objs: "APOLLO-{{ db_mode }}"
+    roles: grafana
+    grant_option: no
+    state: present
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+  # TODO: verify this is working
+
+- name: revoke public privs to APOLLO database
+  postgresql_privs:
+    type: database
+    database: "APOLLO-{{ db_mode }}"
+    privs: ALL
+    objs: "APOLLO-{{ db_mode }}"
+    role: PUBLIC
+    state: absent
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: 2018postgresql0829
+    ssl_mode: require  # or verify-ca / verify-full
+# TODO: revoke apollodevdb privs as well?  or just remove from template0/1 at
+# the start?
+
+########################## Second part: create schema ##########################
+
+# TODO: (safe) initialization of db
+
+########################## Last part: set up backups ###########################
+
+# TODO: backups (dumps) down to Z: or something
+
+################################################################################

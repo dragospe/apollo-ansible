@@ -91,4 +91,8 @@
 #   #       name: postgresql
 #   #       state: started
 
+- hosts: databases
+  tasks:
+  - import_tasks: db.yaml
+
 # TODO: latest version of stuff for test, pinned to some "latest working" for prod

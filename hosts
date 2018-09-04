@@ -5,7 +5,7 @@
 
 localhost           ansible_connection=local
 apollo-scripts-test ansible_host=172.17.176.77  ansible_user=centos
-rds-test            ansible_host=apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+# rds-test            ansible_host=apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
 # apollo-scripts      ansible_host=192.0.2.52  ansible_user=centos
 # apollo-oauth-test   ansible_host=18.220.182.219  ansible_user=centos
 # apollo-oauth        ansible_host=192.0.2.50  ansible_user=centos
@@ -17,7 +17,7 @@ localhost
 
 [test]
 apollo-scripts-test
-rds-test
+# rds-test
 # apollo-oauth-test
 
 [prod]
@@ -36,8 +36,12 @@ apollo-scripts-test  mode=test
 # apollo-oauth
 
 [databases]
-rds-test
+localhost  db_mode=test
+# apollo-scripts-test  db_mode=test
+# rds-test
 # rds
+# Note: the hosts specified here aren't necessarily DB servers; they're just the
+# hosts that will connect to and configure the DB servers.
 
 ############################## other breakdowns: ###############################
 

@@ -127,7 +127,7 @@
 
 - name: copy REDCap token
   copy:
-    src: "{{ '/home/alex/code/apollo_ansible/secrets/redcap_secrets.py' if mode == 'prod' else 
+    src: "{{ '/home/alex/code/apollo_ansible/secrets/redcap_secrets.py' if qol_mode == 'prod' else 
              '/home/alex/code/apollo_ansible/secrets/redcap_secrets_test.py' }}"
     dest: /home/alex/code/redcap_qol_hacks/redcap_secrets.py
     owner: alex
@@ -138,7 +138,7 @@
 
 - name: copy QOL script settings file
   copy:
-    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if mode == 'prod' else 
+    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if qol_mode == 'prod' else 
                  'PROJECT_NAME = \"APOLLO-AF (testing)\"' }}"
     dest: /home/alex/code/redcap_qol_hacks/proj_settings.py
     owner: alex
