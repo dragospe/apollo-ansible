@@ -61,7 +61,7 @@
 - name: copy REDCap token
   copy:
     src: /home/alex/code/apollo_ansible/secrets/redcap_secrets.py
-    dest: /home/alex/code/apollo_db/loaders/redcap_secrets.py
+    dest: /home/alex/code/apollo_db/loaders/redcap_secrets.py  # TODO: dev/test vs. prod
     owner: alex
     group: alex
     mode: 0640
@@ -127,8 +127,20 @@
 
 - name: copy REDCap token
   copy:
-    src: /home/alex/code/apollo_ansible/secrets/redcap_secrets.py
+    src: "{{ '/home/alex/code/apollo_ansible/secrets/redcap_secrets.py' if mode == 'prod' else 
+             '/home/alex/code/apollo_ansible/secrets/redcap_secrets_test.py' }}"
     dest: /home/alex/code/redcap_qol_hacks/redcap_secrets.py
+    owner: alex
+    group: alex
+    mode: 0640
+  become: yes
+  become_user: alex
+
+- name: copy QOL script settings file
+  copy:
+    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if mode == 'prod' else 
+                 'PROJECT_NAME = \"APOLLO-AF (testing)\"' }}"
+    dest: /home/alex/code/redcap_qol_hacks/proj_settings.py
     owner: alex
     group: alex
     mode: 0640
@@ -152,24 +164,24 @@
     state: present
   become: yes
 
-# TODO: test mode on test/dev server that doesn't actually do anything to
-# REDCap... only prod should be running.  (how to _test_ it then?  the problem
-# is we don't have a test REDCap.)
-
-# TODO (only on prod):
-# - name: send surveys daily
-#   cron:
-#     name: daily QOL surveys
-#     user: alex
-#     job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d"
-#     minute: 0
-#     hour: 16
-# - name: send surveys weekly
-#   cron:
-#     name: weekly QOL surveys
-#     user: alex
-#     job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r"
-#     minute: 5
-#     hour: 16
+- name: send surveys daily
+  cron:
+    name: daily QOL surveys
+    user: alex
+    job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d"
+    minute: 0
+    hour: 16
+  become: yes
+  become_user: alex
+- name: send surveys weekly
+  cron:
+    name: weekly QOL surveys
+    user: alex
+    job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r"
+    minute: 5
+    hour: 16
+  become: yes
+  become_user: alex
+# TODO?: don't always enable on test (because then Alex keeps getting emails)
 
 ################################################################################

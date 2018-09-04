@@ -45,6 +45,8 @@
   #       - ddclient
   #     state: present
   #   become: yes
+  # TODO?: tmux
+  # TODO?: bash config, aliases, editor
 
 - hosts: scripts
   tasks:

@@ -28,8 +28,8 @@ rds-test
 ################################ 3 main roles: #################################
 
 [scripts]
-apollo-scripts-test
-# apollo-scripts
+apollo-scripts-test  mode=test
+# apollo-scripts       mode=prod
 
 [oauth]
 # apollo-oauth-test
