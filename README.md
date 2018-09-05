@@ -8,7 +8,7 @@ Ansible setup for the APOLLO-AF project
 
 * create `vault_pass.txt` in `secrets/` containing the vault password
 
-* link `/etc/ansible/hosts` to this repo's `hosts` file
+* link `/etc/ansible/hosts` to this repo's `hosts` file (optional; could point ansible.cfg to the inventory file instead, or use `-i` with ansible commands)
 
 ## Deployment
 
