@@ -13,33 +13,33 @@
 - name: create APOLLO postgres user
   postgresql_user:
     name: APOLLO
-    password: sukS6rCM9WY3p6Kj
+    password: "{{ lookup('file', 'secrets/apollo_pg_password.txt') }}"
     encrypted: yes
     no_password_changes: yes  # TODO: only on RDS?
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
 
 - name: create grafana postgres user
   postgresql_user:
     name: grafana
-    password: grafana-db-pw
+    password: "{{ lookup('file', 'secrets/grafana_pg_password.txt') }}"
     encrypted: yes
     no_password_changes: yes  # TODO: only on RDS?
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
 
 - name: create APOLLO database
   postgresql_db:
     name: "APOLLO-{{ db_mode }}"
     # TODO?: restore some saved state e.g. for testing
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
 
 - name: give APOLLO user full access to APOLLO database
   postgresql_privs:
@@ -50,10 +50,10 @@
     roles: APOLLO
     grant_option: no
     state: present
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
 
 - name: give grafana user read-only access to APOLLO database
   postgresql_privs:
@@ -64,10 +64,10 @@
     roles: grafana
     grant_option: no
     state: present
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
   # TODO?: need to refresh as schema changes
 
 - name: give grafana user TEMP privs on APOLLO database
@@ -79,10 +79,10 @@
     roles: grafana
     grant_option: no
     state: present
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
   # TODO: verify this is working
 
 - name: revoke public privs to APOLLO database
@@ -93,10 +93,10 @@
     objs: "APOLLO-{{ db_mode }}"
     role: PUBLIC
     state: absent
-    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: 2018postgresql0829
-    ssl_mode: require  # or verify-ca / verify-full
+    login_host: "{{ login_host }}"
+    login_user: "{{ login_user }}"
+    login_password: "{{ login_password }}"
+    ssl_mode: "{{ ssl_mode }}"
 # TODO: revoke apollodevdb privs as well?  or just remove from template0/1 at
 # the start?
 

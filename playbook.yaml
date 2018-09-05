@@ -45,8 +45,7 @@
   #       - ddclient
   #     state: present
   #   become: yes
-  # TODO?: tmux
-  # TODO?: bash config, aliases, editor
+  # TODO?: tmux, bash config, aliases, editor, molly-guard, fail2ban, ...
 
 - hosts: scripts
   tasks:
@@ -92,6 +91,11 @@
 #   #       state: started
 
 - hosts: databases
+  vars:
+    login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
+    login_user: apollodevdb
+    login_password: "{{ lookup('file', 'secrets/rds_password.txt') }}"
+    ssl_mode: require  # or verify-ca / verify-full
   tasks:
   - import_tasks: db.yaml
 
