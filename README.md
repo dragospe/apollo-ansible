@@ -8,11 +8,13 @@ Ansible setup for the APOLLO-AF project
 
 * create `vault_pass.txt` in `secrets/` containing the vault password
 
-* link `hosts` to `/etc/ansible/hosts`
+* link `/etc/ansible/hosts` to this repo's `hosts` file
 
 ## Deployment
 
-`ansible-playbook playbook.yaml --vault-password-file secrets/vault_pass.txt [-K]
+Run this to configure everything:
+
+    ansible-playbook playbook.yaml --vault-password-file secrets/vault_pass.txt [-K]
 
 `-K` is only needed for local sudo.
 
