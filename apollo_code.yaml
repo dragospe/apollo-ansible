@@ -40,7 +40,22 @@
     repo_url: git@bitbucket.org:atpage/geneactiv.git
     key_file: /home/alex/.ssh/id_rsa_apollo
 
-# TODO: compile page parser, install python prereqs like progressbar, matplotlib
+- name: compile geneactiv page parser
+  command: make lib
+  args:
+    chdir: /home/alex/code/geneactiv/page_parser
+    creates: /home/alex/code/geneactiv/page_parser/libgeneactivpage.so
+  become: yes
+  become_user: alex
+
+- name: install geneactiv page parser
+  command: make install
+  args:
+    chdir: /home/alex/code/geneactiv/page_parser
+    creates: /usr/local/lib/libgeneactivpage.so
+  become: yes
+
+# TODO: install python prereqs like progressbar, matplotlib
 
 ################################## APOLLO DB ###################################
 
@@ -51,6 +66,7 @@
   become: yes
 # TODO: that should be done automatically as a prereq of apollo_db
 # ('install_requires ...' in setup.py)
+# See: https://github.com/pypa/pip/issues/4780
 
 - include_tasks: py_clone_install.yaml
   vars:
