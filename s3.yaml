@@ -6,6 +6,7 @@
     dest: /home/alex/code/s3fs-fuse
   become: yes
   become_user: alex
+
 - name: install s3fs prereqs (redhat)
   package:
     name:
@@ -21,6 +22,7 @@
     state: present
   become: yes
   when: ansible_os_family == 'RedHat'
+
 - name: install s3fs prereqs (debian)
   package:
     name:
@@ -38,6 +40,7 @@
     state: present
   become: yes
   when: ansible_os_family == 'Debian'
+
 - name: compile s3fs
   command: "{{ item }}"
   with_items:
@@ -49,11 +52,21 @@
     creates: /home/alex/code/s3fs-fuse/src/s3fs
   become: yes
   become_user: alex
+
 - name: install s3fs
   command: make install
   args:
     chdir: /home/alex/code/s3fs-fuse
     creates: /usr/local/bin/s3fs
+  become: yes
+
+- name: install S3 credentials
+  copy:
+    src: /home/alex/code/apollo_ansible/secrets/passwd-s3fs
+    dest: /etc/passwd-s3fs
+    owner: root
+    group: root
+    mode: 0640
   become: yes
 
 ##################################### s3ql #####################################
@@ -66,29 +79,69 @@
     state: present
   become: yes
 
-- name: install s3ql prereqs
-  pip:
-    name: "{{ item[1] }}"
-    executable: "{{ item[0] }}"
-  with_nested:
-    - ['pip2', 'pip3']
-    - ['apsw', 'pycrypto', 'requests', 'defusedxml', 'llfuse==1.3.5']
+- name: install s3ql prereqs (yum)
+  package:
+    name:
+      - unzip
+      - bzip2
+      - "{{ 'sqlite-devel' if ansible_os_family == 'RedHat' else 'libsqlite3-dev' }}"
+      # TODO?:
+      #   systemd-devel
+      #   libattr-devel
+      #   fuse-devel
+      #   psmisc
+      #   sqlite
+      #   gcc
+      #   git
+    state: present
   become: yes
 
-- name: install final s3ql prereq (dugong)
+- name: install s3ql prereqs (pip)
   pip:
-    name: dugong
-    version: 3.7.3
+    name: "{{ item }}"
     executable: pip3
+  with_items:
+    - apsw
+    - pycrypto
+    - requests
+    - defusedxml
+    - 'llfuse==1.3.5'
+    - 'dugong==3.7.3'
+    - pytest  # optional, to run unit tests
+    # TODO?:
+    # setuptools, version 1.0 or newer
+    # systemd (optional, for enabling systemd support)
+    # pytest-catchlog
+  become: yes
+  # Those are (mostly) all listed in setup.py, but we seem to need to install
+  # them manually.  (see https://github.com/pypa/pip/issues/4780)
+  # Note: exact version numbers are used to work aroud
+  # https://github.com/ansible/ansible/issues/22399.
+
+- name: extract s3ql source
+  unarchive:
+    src: /home/alex/code/apollo_ansible/bin/s3ql-2.30.tar.bz2
+    dest: /home/alex/code
+    creates: /home/alex/code/s3ql-2.30/setup.py
+  become: yes
+  become_user: alex
+
+- name: compile s3ql
+  command: 'python3 setup.py build_ext --inplace'
+  args:
+    chdir: /home/alex/code/s3ql-2.30
+    creates: /home/alex/code/s3ql-2.30/src/s3ql/deltadump.cpython-34m.so
+  become: yes
+  become_user: alex
+  # Note: you can test it with `python3 -m pytest tests/`.
+
+- name: install s3ql
+  command: python3 setup.py install
+  args:
+    chdir: /home/alex/code/s3ql-2.30
+    creates: /usr/bin/mount.s3ql
   become: yes
 
-# Those are all listed in setup.py, but we seem to need to install them
-# manually.  (see https://github.com/pypa/pip/issues/4780)
-
-# - include_tasks: py_clone_install.yaml
-#   vars:
-#     repo_name: s3ql
-#     repo_url: https://github.com/s3ql/s3ql.git
-#     # key_file: /home/alex/.ssh/id_rsa_apollo
+# TODO: creds (http://www.rath.org/s3ql-docs/authinfo.html)
 
 ################################################################################

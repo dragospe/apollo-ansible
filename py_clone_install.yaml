@@ -3,7 +3,7 @@
   git:
     repo: "{{repo_url}}"
     dest: "/home/alex/code/{{repo_name}}"
-    key_file: "{{key_file}}"
+    key_file: "{{key_file | default(omit)}}"
   become: yes
   become_user: alex
 
