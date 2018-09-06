@@ -15,6 +15,7 @@
         - emacs
         - htop
         - ntp
+        - awscli
         - "{{ 'postgresql'   if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
         - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
         - "{{ 'python34-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
@@ -69,7 +70,7 @@
       state: present
     become: yes
   # TODO: grafana setup, tls, dns, etc.
-  - import_tasks: s3fs.yaml
+  - import_tasks: s3.yaml
   - import_tasks: apollo_code.yaml
 
 # - hosts: oauth

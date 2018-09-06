@@ -1,0 +1,94 @@
+##################################### s3fs #####################################
+
+- name: download s3fs
+  git:
+    repo: https://github.com/s3fs-fuse/s3fs-fuse.git
+    dest: /home/alex/code/s3fs-fuse
+  become: yes
+  become_user: alex
+- name: install s3fs prereqs (redhat)
+  package:
+    name:
+      - automake
+      - fuse
+      - fuse-devel
+      - gcc-c++
+      - git
+      - libcurl-devel
+      - libxml2-devel
+      - make
+      - openssl-devel
+    state: present
+  become: yes
+  when: ansible_os_family == 'RedHat'
+- name: install s3fs prereqs (debian)
+  package:
+    name:
+      - automake
+      - autotools-dev
+      - fuse
+      - g++
+      - git
+      - libcurl4-openssl-dev
+      - libfuse-dev
+      - libssl-dev
+      - libxml2-dev
+      - make
+      - pkg-config
+    state: present
+  become: yes
+  when: ansible_os_family == 'Debian'
+- name: compile s3fs
+  command: "{{ item }}"
+  with_items:
+    - ./autogen.sh
+    - ./configure
+    - make
+  args:
+    chdir: /home/alex/code/s3fs-fuse
+    creates: /home/alex/code/s3fs-fuse/src/s3fs
+  become: yes
+  become_user: alex
+- name: install s3fs
+  command: make install
+  args:
+    chdir: /home/alex/code/s3fs-fuse
+    creates: /usr/local/bin/s3fs
+  become: yes
+
+##################################### s3ql #####################################
+
+- name: install python developer tools
+  package:
+    name:
+      - "{{ 'python-devel'   if ansible_os_family == 'RedHat' else 'python-dev' }}"
+      - "{{ 'python34-devel' if ansible_os_family == 'RedHat' else 'python3-dev' }}"
+    state: present
+  become: yes
+
+- name: install s3ql prereqs
+  pip:
+    name: "{{ item[1] }}"
+    executable: "{{ item[0] }}"
+  with_nested:
+    - ['pip2', 'pip3']
+    - ['apsw', 'pycrypto', 'requests', 'defusedxml', 'llfuse==1.3.5']
+  become: yes
+
+- name: install final s3ql prereq (dugong)
+  pip:
+    name: dugong
+    version: 3.7.3
+    executable: pip3
+  become: yes
+
+# Those are all listed in setup.py, but we seem to need to install them
+# manually.  (see https://github.com/pypa/pip/issues/4780)
+
+# - include_tasks: py_clone_install.yaml
+#   vars:
+#     repo_name: s3ql
+#     repo_url: https://github.com/s3ql/s3ql.git
+#     # key_file: /home/alex/.ssh/id_rsa_apollo
+
+################################################################################
