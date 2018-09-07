@@ -1,3 +1,7 @@
+
+# We install two different utilities that can mount S3 buckets: s3fs and s3ql.
+# But in the end we will only use one of them.
+
 ##################################### s3fs #####################################
 
 - name: download s3fs
@@ -143,5 +147,27 @@
   become: yes
 
 # TODO: creds (http://www.rath.org/s3ql-docs/authinfo.html)
+
+################################### mount it ###################################
+
+- name: create directory to mount s3 bucket
+  file:
+    path: /mnt/s3
+    state: directory
+    owner: root
+    group: root
+    mode: 0775  # TODO
+  become: yes
+
+- name: mount S3 bucket
+  mount:
+    path: /mnt/s3
+    src: 's3fs#smd-apollo-test'  # TODO: may get renamed
+    fstype: fuse
+    opts: _netdev,allow_other
+    state: mounted
+  become: yes
+
+# TODO: create directories for test+prod, subdirs for subjects and file types
 
 ################################################################################
