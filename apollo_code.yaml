@@ -121,7 +121,7 @@
     src: /home/alex/code/apollo_ansible/bin/chromedriver
     dest: /usr/local/bin/chromedriver
     mode: 0755
-    force: no
+    #force: yes
   become: yes
 
 # TODO: ensure chrome and webdriver versions are compatible (i.e. don't let
@@ -143,7 +143,7 @@
 
 - name: copy REDCap token
   copy:
-    src: "{{ '/home/alex/code/apollo_ansible/secrets/redcap_secrets.py' if qol_mode == 'prod' else 
+    src: "{{ '/home/alex/code/apollo_ansible/secrets/redcap_secrets.py' if qol_mode == 'prod' else
              '/home/alex/code/apollo_ansible/secrets/redcap_secrets_test.py' }}"
     dest: /home/alex/code/redcap_qol_hacks/redcap_secrets.py
     owner: alex
@@ -154,7 +154,7 @@
 
 - name: copy QOL script settings file
   copy:
-    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if qol_mode == 'prod' else 
+    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if qol_mode == 'prod' else
                  'PROJECT_NAME = \"APOLLO-AF (testing)\"' }}"
     dest: /home/alex/code/redcap_qol_hacks/proj_settings.py
     owner: alex
