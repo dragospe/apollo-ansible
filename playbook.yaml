@@ -100,5 +100,6 @@
     ssl_mode: require  # or verify-ca / verify-full
   tasks:
   - import_tasks: db.yaml
+# TODO: pg_dump "APOLLO_DB_NAME_HERE" > /some/backup/location/APOLLO_DB_NAME_HERE.dump
 
 # TODO: latest version of stuff for test, pinned to some "latest working" for prod
