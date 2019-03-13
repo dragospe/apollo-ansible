@@ -12,6 +12,7 @@
     password: '$6$cMOXifgpL$1YACgk72wHGm1Y8NzEt63sFjswMNQtw7JLO5g8G0rP55al9kBc4rEZETay2y08Jf0WRC5/FAG4Bdu5DE8sB7.1'
     # (use `mkpasswd --method=sha-512` to create password)
     groups: "alex,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
+    # TODO?: primary group = alex
     append: yes
     create_home: yes
   become: yes
@@ -37,5 +38,13 @@
         name: user.name
         value: Alex Page
         scope: global
+  become: yes
+  become_user: alex
+
+- name: fix ll alias
+  lineinfile:
+    path: /home/alex/.bashrc
+    line: "alias ll='ls -lah --color=auto'"
+    insertafter: EOF
   become: yes
   become_user: alex
