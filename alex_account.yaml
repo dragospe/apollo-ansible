@@ -48,3 +48,10 @@
     insertafter: EOF
   become: yes
   become_user: alex
+
+- name: Set emacs as default editor
+  lineinfile:
+    path: /home/alex/.bash_profile
+    line: export EDITOR="emacs"
+  become: yes
+  become_user: alex
