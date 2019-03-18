@@ -28,6 +28,43 @@
       enabled: yes
       state: started
     become: yes
+  #### Security stuff: ####
+  - name: Keep postfix stopped
+    service:
+      name: postfix
+      state: stopped
+    become: yes
+  - name: Harden sysctl
+    blockinfile:
+      path: /etc/sysctl.conf
+      block: |
+        fs.suid_dumpable = 0
+        kernel.core_uses_pid = 1
+        kernel.dmesg_restrict = 1
+        kernel.kptr_restrict = 2
+        kernel.yama.ptrace_scope = 2
+        net.ipv4.conf.all.accept_redirects = 0
+        net.ipv4.conf.all.send_redirects = 0
+        net.ipv4.conf.default.accept_redirects = 0
+        net.ipv4.conf.default.accept_source_route = 0
+        net.ipv6.conf.all.accept_redirects = 0
+        net.ipv6.conf.default.accept_redirects = 0
+    become: yes
+  - name: install some security tools
+    package:
+      name:
+        - fail2ban
+        - clamav
+      state: present
+    become: yes
+  - name: enable fail2ban
+    service:
+      name: fail2ban
+      enabled: yes
+      state: started
+    become: yes
+  # TODO: enable jails
+  # TODO: auto-update clamav data
 
 - hosts: remote
   tasks:
@@ -47,7 +84,7 @@
   #       - ddclient
   #     state: present
   #   become: yes
-  # TODO?: tmux, bash config, aliases, editor, molly-guard, fail2ban, ...
+  # TODO?: tmux, bash config, aliases, molly-guard, ...
 
 - hosts: scripts
   tasks:
@@ -68,6 +105,11 @@
       name:
         - grafana
       state: present
+    become: yes
+  - name: Keep grafana stopped, for now
+    service:
+      name: grafana-server
+      state: stopped
     become: yes
   # TODO: grafana setup, tls, dns, etc.
   - import_tasks: s3.yaml
