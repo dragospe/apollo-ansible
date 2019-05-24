@@ -89,6 +89,7 @@
 - hosts: scripts
   tasks:
   - name: add grafana repository
+    # TODO: https://grafana.com/docs/installation/debian/#apt-repository for deb version
     yum_repository:
       name: grafana
       description: grafana repo

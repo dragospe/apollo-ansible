@@ -185,9 +185,9 @@
     name: daily QOL surveys
     user: alex
     job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -d"
-    minute: 0
-    hour: 16
-    disabled: yes
+    minute: '0'
+    hour: '16'
+    disabled: no
   become: yes
   become_user: alex
 - name: send surveys weekly
@@ -195,9 +195,9 @@
     name: weekly QOL surveys
     user: alex
     job: "xvfb-run /home/alex/code/redcap_qol_hacks/send_redcap_surveys.py -r"
-    minute: 5
-    hour: 16
-    disabled: yes
+    minute: '5'
+    hour: '16'
+    disabled: no
   become: yes
   become_user: alex
 # TODO?: don't always enable on test (because then Alex keeps getting emails)
