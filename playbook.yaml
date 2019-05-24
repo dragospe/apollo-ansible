@@ -18,7 +18,7 @@
         - awscli
         - "{{ 'postgresql'   if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
         - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
-        - "{{ 'python34-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
+        - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
         - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
       state: present
     become: yes

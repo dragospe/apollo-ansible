@@ -79,7 +79,7 @@
   package:
     name:
       - "{{ 'python-devel'   if ansible_os_family == 'RedHat' else 'python-dev' }}"
-      - "{{ 'python34-devel' if ansible_os_family == 'RedHat' else 'python3-dev' }}"
+      - "{{ 'python36-devel' if ansible_os_family == 'RedHat' else 'python3-dev' }}"
     state: present
   become: yes
 

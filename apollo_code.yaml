@@ -125,7 +125,7 @@
   become: yes
 
 # TODO: ensure chrome and webdriver versions are compatible (i.e. don't let
-# someone update chrome and break the webdriver)
+# someone update chrome and break the webdriver).  at least make yum ignore Chrome.
 
 - name: pip install selenium
   pip:
