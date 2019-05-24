@@ -78,6 +78,16 @@
 - hosts: remote
   tasks:
   - import_tasks: alex_account.yaml
+  - name: harden sshd
+    copy:
+      src: /home/alex/code/apollo_ansible/sshd_config
+      dest: /etc/ssh/sshd_config
+      mode: 0640
+      force: yes
+      backup: yes
+    become: yes
+    # TODO: restart sshd if file changed
+    # TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
   - name: set hostname
     hostname:
       name: "{{ inventory_hostname }}"
