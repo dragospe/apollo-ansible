@@ -57,13 +57,22 @@
         - clamav
       state: present
     become: yes
+  - name: enable fail2ban jail(s)
+    blockinfile:
+      path: /etc/fail2ban/jail.d/from-ansible.conf
+      mode: '644'
+      create: yes
+      block: |
+        [sshd]
+        enabled = true
+    become: yes
+    # TODO: enable more as needed
   - name: enable fail2ban
     service:
       name: fail2ban
       enabled: yes
       state: started
     become: yes
-  # TODO: enable jails
   # TODO: auto-update clamav data
 
 - hosts: remote
