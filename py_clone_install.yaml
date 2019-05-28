@@ -8,8 +8,9 @@
   become_user: alex
 
 - name: "pip3 install {{repo_name}}"
-  command: pip3 install -e .
-  args:
+  pip:
+    name: .
     chdir: "/home/alex/code/{{repo_name}}"
-    creates: "/home/alex/code/{{repo_name}}/{{repo_name}}.egg-info/PKG-INFO"
+    editable: yes
+    executable: pip3
   become: yes
