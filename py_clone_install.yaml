@@ -14,3 +14,4 @@
     editable: yes
     executable: pip3
   become: yes
+  # TODO: don't re-run every time

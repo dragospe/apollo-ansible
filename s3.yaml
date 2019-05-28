@@ -160,6 +160,7 @@
     state: mounted
   become: yes
 
-# TODO: create directories for test+prod, subdirs for subjects and file types
+# TODO: create directories (or better, separate buckets to allow simultaneous
+# mounting) for test+prod, subdirs for subjects and file types
 
 ################################################################################

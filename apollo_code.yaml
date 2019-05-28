@@ -109,6 +109,7 @@
     dest: /tmp/google-chrome-stable_current_x86_64.rpm
     mode: 0644
     force: no
+  # TODO: make sure this is actually copying when different, and installing below
 
 - name: install Chrome
   yum:
