@@ -106,6 +106,8 @@
       state: started
     become: yes
   # TODO: auto-update clamav data
+  # TODO: Auter or unattended-upgrade/yum-cron.  careful not to clobber chrome
+  # or auto-reboot a (local) machine.
 
 - hosts: remote
   tasks:
