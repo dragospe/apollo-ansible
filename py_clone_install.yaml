@@ -13,5 +13,10 @@
     chdir: "/home/alex/code/{{repo_name}}"
     editable: yes
     executable: pip3
+  register: result
+  # This method only works in new-ish pip:
+  changed_when: '"Found existing installation" not in result.stdout'
+  # TODO: find better method that doesn't reinstall every time if it's already
+  # there.  something like:
+  #   creates: "/usr/*lib/python3.*/*-packages/redcapi.egg-link"
   become: yes
-  # TODO: don't re-run every time

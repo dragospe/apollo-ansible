@@ -22,6 +22,31 @@
         - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
       state: present
     become: yes
+  - name: ensure /usr/local/bin is in PATH (for normal login)
+    copy:
+      src: /home/alex/code/apollo_ansible/custom_path.sh
+      dest: /etc/profile.d/custom_path.sh
+      mode: 0644
+    become: yes
+  - name: ensure /usr/local/bin is in PATH (for sudo)
+    copy:
+      content: "Defaults	secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n"
+      # If you mess that up, see:
+      #   https://askubuntu.com/questions/73864/how-to-modify-an-invalid-etc-sudoers-file
+      #   https://askubuntu.com/questions/799669/etc-sudoers-file-corrupted-and-i-cant-run-pkexec-visudo-over-ssh
+      dest: /etc/sudoers.d/50-custom-path
+      mode: 0440
+    become: yes
+  # TODO?: may need to reset_connection here.
+  - name: update pip
+    pip:
+      name: pip
+      state: latest
+      executable: "{{ item }}"
+    with_items:
+      - pip2
+      - pip3
+    become: yes
   - name: enable ntpd
     service:
       name: "{{ 'ntpd'  if ansible_os_family == 'RedHat' else 'ntp' }}"
