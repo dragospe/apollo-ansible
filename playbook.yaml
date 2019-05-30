@@ -75,6 +75,13 @@
         net.ipv6.conf.all.accept_redirects = 0
         net.ipv6.conf.default.accept_redirects = 0
     become: yes
+  - name: restrict umask
+    copy:
+      content: "umask 027\n"
+      dest: /etc/profile.d/custom_umask.sh
+      # TODO: in Ubuntu we should set it in /etc/login.defs
+      mode: 0644
+    become: yes
   - name: install some security tools
     package:
       name:
@@ -128,7 +135,7 @@
   #       - ddclient
   #     state: present
   #   become: yes
-  # TODO?: tmux, bash config, aliases, molly-guard, ...
+  # TODO: tmux, molly-guard, ...
 
 - hosts: scripts
   tasks:
