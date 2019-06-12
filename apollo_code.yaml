@@ -77,7 +77,10 @@
 - name: copy REDCap token
   copy:
     src: /home/alex/code/apollo_ansible/secrets/redcap_secrets.py
-    dest: /home/alex/code/apollo_db/loaders/redcap_secrets.py  # TODO: dev/test vs. prod
+    # TODO: switch between dev/test and prod, like:
+    # src: "{{ '/home/alex/code/apollo_ansible/secrets/redcap_secrets.py' if qol_mode == 'prod' else
+    #          '/home/alex/code/apollo_ansible/secrets/redcap_secrets_test.py' }}"
+    dest: /home/alex/code/apollo_db/loaders/redcap_secrets.py
     owner: alex
     group: alex
     mode: 0640
@@ -126,7 +129,8 @@
   become: yes
 
 # TODO: ensure chrome and webdriver versions are compatible (i.e. don't let
-# someone update chrome and break the webdriver).  at least make yum ignore Chrome.
+# someone update chrome and break the webdriver).  at least make yum ignore
+# Chrome. (use yum versionlock?)
 
 - name: pip install selenium
   pip:
