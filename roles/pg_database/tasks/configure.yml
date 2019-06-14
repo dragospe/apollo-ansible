@@ -1,0 +1,32 @@
+- name: Determine if db is already initialized
+  find:
+    path: '/var/lib/pgsql/11/data'
+  register: found_files      
+
+- name: Initialize postgres database 
+  command: '/usr/pgsql-11/bin/postgresql-11-setup initdb'
+  when: found_files.msg == ""  and found_files.matched == 0
+  notify: restart postgres
+
+- name: Autostart postgres on boot
+  systemd: 
+    name: postgresql-11
+    enabled: yes
+
+- name: Add /usr/bin/pgsql-11 to $PATH
+  shell: echo '[[ ":$PATH:" != *":/usr/pgsql-11/bin:"* ]] && export PATH="$PATH:/usr/pgsql-11/bin"' > /etc/profile.d/pgpath.sh
+  args:
+    creates: /etc/profile.d/pgpath.sh
+
+
+- name: Configure host based authentication (if entries are configured).
+  template:
+    src: "pg_hba.conf.j2"
+    dest: "{{ postgresql_config_path }}/pg_hba.conf"
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
+    mode: 0600
+  notify: restart postgresql
+  when: postgresql_hba_entries
+
+

@@ -1,2 +1,4 @@
 ---
 # defaults file for ts_database
+
+database_name: apollo_ts

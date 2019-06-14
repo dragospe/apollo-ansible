@@ -19,15 +19,14 @@
           - htop
           - ntp
           - awscli
-          - "{{ 'postgresql'   if ansible_os_family == 'RedHat' else 'postgresql-client' }}"
           - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
           - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
           - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
-      state: present
+        state: present
 
     - name: ensure /usr/local/bin is in PATH (for normal login)
       copy:
-        src: /home/alex/code/apollo_ansible/custom_path.sh
+        src: custom_path.sh
         dest: /etc/profile.d/custom_path.sh
         mode: 0644
     
@@ -126,8 +125,8 @@
         mode: 0640
         force: yes
         backup: yes
+      notify: restart sshd
     
-    # TODO: restart sshd if file changed
     # TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
 
     - name: set hostname

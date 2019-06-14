@@ -17,12 +17,12 @@
     create_home: yes
   become: yes
 
-- name: authorize ssh key for Alex
-  authorized_key:
-    user: alex
-    state: present
-    key: "{{ lookup('file', '/home/alex/.ssh/id_rsa_urmc_aws.pub') }}"
-  become: yes
+#- name: authorize ssh key for Alex
+#  authorized_key:
+#    user: alex
+#    state: present
+#    key: "{{ lookup('file', '/home/alex/.ssh/id_rsa_urmc_aws.pub') }}"
+#  become: yes
 
 - name: set up git config for Alex
   block:
