@@ -28,11 +28,20 @@
       when: ansible_os_family == 'RedHat'
      
     - name: Prevent dependencies being resolved by base repo (CentOS)
-      copy:     
-        src: CentOS-Base.repo
-        dest: /etc/yum.repos.d/CentOS-Base.repo
-      when: ansible_distribution == 'CentOS'
-      become: yes
+      block:
+        - name: Exclude postgres* in base
+          ini_file:
+            path: /etc/yum.repos.d/CentOS-Base.repo
+            section: base
+            option: exclude
+            value: 'postgres*'
+
+        - name: Exclude postgres* in updates
+          ini_file:
+            path: /etc/yum.repos.d/CentOS-Base.repo
+            section: updates
+            option: exclude
+            value: 'postgres*' 
   
     - name: Install PostgreSQL 11 Server
       yum:
