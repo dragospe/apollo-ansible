@@ -1,0 +1,3 @@
+---
+# defaults file for apollo_ts
+__postgresql_database_name: "apollo_ts"

@@ -1,0 +1,8 @@
+---
+# tasks file for apollo_ts
+- name: Set variables
+  include_tasks: variables.yml
+
+- name: Create a timescaledb database
+  include_tasks: create.yml
+

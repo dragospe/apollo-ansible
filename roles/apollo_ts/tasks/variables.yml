@@ -1,0 +1,5 @@
+---
+- name: Define postgresql_database_name
+  set_fact:
+      postgresql_database_name: "{{ __postgresql_database_name }}"
+  when: postgresql_database_name is not defined

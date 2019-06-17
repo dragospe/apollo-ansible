@@ -1,0 +1,26 @@
+- name: Make sure postgres is running
+  systemd:
+    name: postgresql-11
+    state: started
+
+- name: Create a database
+  postgresql_db:
+    name: "{{ postgresql_database_name }}"
+    owner: postgres
+  when: postgresql_database_name is defined
+  become_user: postgres
+  become: yes
+
+- name: Extend with timescaledb
+  # WARN: Ansible 2.7 does not have the "cascade option" 
+  postgresql_ext:
+    name: timescaledb
+    db: "{{ postgresql_database_name }}"
+    #cascade: true
+  become_user: postgres
+  become: yes
+    
+  # Since 2.7 doesn't have the cascade option:
+  #shell: "psql -c \"CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;\""
+  #become: yes
+  #become_user: postgres

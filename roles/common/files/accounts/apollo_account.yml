@@ -1,0 +1,35 @@
+
+- name: create a group for Apollo
+  group:
+    name: apollo
+    state: present
+  become: yes
+
+- name: create an account for Apollo
+  user:
+    name: apollo
+    shell: /bin/bash
+    # (use `mkpasswd --method=sha-512` to create password)
+    groups: "apollo"
+    # TODO?: primary group = apollo
+    append: yes
+    create_home: yes
+  become: yes
+
+- name: authorize ssh keys for Apollo
+  authorized_key:
+    user: apollo
+    state: present
+    key: "{{ item }}"
+  with_items:
+    - "{{ lookup('file', 'roles/common/files/accounts/keys/id_rsa_peter.pub') }}"
+   # - "{{ lookup('file', 'roles/common/files/accounts/keys/id_rsa_urmc_aws.pub') }}"
+  become: yes
+
+- name: Restrict authorized keys for apollo
+  file: 
+    path: /home/apollo/.ssh/authorized_keys
+    owner: root
+    group: root
+    mode: "0644"
+

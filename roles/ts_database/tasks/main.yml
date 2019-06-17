@@ -1,0 +1,10 @@
+---
+# tasks file for ts_database
+
+#TODO:  Determine if the Timescaledb-postgresql-11 package is/should be signed. Appears not to be. 
+
+- name: Install TimescaleDB
+  include_tasks: install.yml
+  when: ansible_os_family == 'RedHat'
+  become: yes
+      
