@@ -9,7 +9,9 @@
   user:
     name: peter
     shell: /bin/bash
-    password: $y$j9T$m5xo0bVFpvu0dizt01RK//$cQ9Aiu4MVj/iqM2/CPIU02Rn0V3xTOv519K.hFmdh2A
+    password: $6$JnCoZLYa$V8TwB3aKl/vTpo/lQA4klAhtZd6e3lM65D32SIn6pYh8UKaoiclxcTRNrD9wEIVM8XL9OSOaNN864.oNObKTg0
+
+
 
     # (use `mkpasswd --method=sha-512` to create password)
     groups: "peter,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"

@@ -141,6 +141,11 @@
       include_tasks: "roles/common/files/accounts/{{ item }}_account.yml"
       loop: "{{ user_accounts }}"
 
+    - name: Disable root account
+      user:
+        name: root
+        password: '*'     
+
   
     # TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
 
