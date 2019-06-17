@@ -1,2 +1,26 @@
 ---
 # tasks file for monitoring
+- name: add grafana repository
+    # TODO: https://grafana.com/docs/installation/debian/#apt-repository for deb version
+    yum_repository:
+      name: grafana
+      description: grafana repo
+      # enabled: yes
+      baseurl: https://packages.grafana.com/oss/rpm
+      repo_gpgcheck: yes
+      gpgcheck: yes
+      gpgkey: https://packages.grafana.com/gpg.key
+      sslverify: yes
+      sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    become: yes
+- name: install grafana
+  package:
+    name:
+      - grafana
+    state: present
+  become: yes
+- name: Keep grafana stopped, for now
+  service:
+    name: grafana-server
+    state: stopped
+  become: yes
