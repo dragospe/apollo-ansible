@@ -1,0 +1,22 @@
+
+- name: "download {{repo_name}} code"
+  git:
+    repo: "{{repo_url}}"
+    dest: "/home/apollo/code/{{repo_name}}"
+    key_file: "{{key_file | default(omit)}}"
+  become: yes
+  become_user: apollo
+
+- name: "pip3 install {{repo_name}}"
+  pip:
+    name: .
+    chdir: "/home/apollo/code/{{repo_name}}"
+    editable: yes
+    executable: pip3
+  register: result
+  # This method only works in new-ish pip:
+  changed_when: '"Found existing installation" not in result.stdout'
+  # TODO: find better method that doesn't reinstall every time if it's already
+  # there.  something like:
+  #   creates: "/usr/*lib/python3.*/*-packages/redcapi.egg-link"
+  become: yes

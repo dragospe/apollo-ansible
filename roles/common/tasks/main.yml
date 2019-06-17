@@ -2,160 +2,26 @@
 # tasks file for common
 
 - name: Common software setup
-  block:
-
-    - name: install EPEL (if redhat)
-      package:
-        name:
-          - epel-release
-        state: present
-      when: ansible_os_family == 'RedHat'
-
-    - name: install commonly-used software
-      package:
-        name:
-          - git
-          - emacs
-          - htop
-          - ntp
-          - awscli
-          - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
-          - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
-          - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
-        state: present
-
-    - name: ensure /usr/local/bin is in PATH (for normal login)
-      copy:
-        src: custom_path.sh
-        dest: /etc/profile.d/custom_path.sh
-        mode: 0644
-    
-    - name: ensure /usr/local/bin is in PATH (for sudo)
-      copy:
-        content: "Defaults	secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n"
-        # If you mess that up, see:
-        #   https://askubuntu.com/questions/73864/how-to-modify-an-invalid-etc-sudoers-file
-        #   https://askubuntu.com/questions/799669/etc-sudoers-file-corrupted-and-i-cant-run-pkexec-visudo-over-ssh
-        dest: /etc/sudoers.d/50-custom-path
-        mode: 0440
-    
-#    TODO?: may need to reset_connection here.
-    - name: update pip
-      pip:
-        name: pip
-        state: latest
-        executable: "{{ item }}"
-      with_items:
-        - pip2
-        - pip3
-   
-    - name: enable ntpd
-      service:
-        name: "{{ 'ntpd'  if ansible_os_family == 'RedHat' else 'ntp' }}"
-        enabled: yes
-        state: started
-
+  include_tasks: software_setup.yml
   become: yes
 
 
 - name: Security stuff
-  block:
-    - name: Keep postfix stopped
-      service:
-        name: postfix
-        state: stopped
-      become: yes
-    - name: Harden sysctl
-      blockinfile:
-        path: /etc/sysctl.conf
-        block: |
-          fs.suid_dumpable = 0
-          kernel.core_uses_pid = 1
-          kernel.dmesg_restrict = 1
-          kernel.kptr_restrict = 2
-          kernel.yama.ptrace_scope = 2
-          net.ipv4.conf.all.accept_redirects = 0
-          net.ipv4.conf.all.send_redirects = 0
-          net.ipv4.conf.default.accept_redirects = 0
-          net.ipv4.conf.default.accept_source_route = 0
-          net.ipv6.conf.all.accept_redirects = 0
-          net.ipv6.conf.default.accept_redirects = 0
-    
-    - name: restrict umask
-      copy:
-        content: "umask 027\n"
-        dest: /etc/profile.d/custom_umask.sh
-        # TODO: in Ubuntu we should set it in /etc/login.defs
-        mode: 0644
-    - name: install some security tools
-      package:
-        name:
-          - fail2ban
-          - clamav
-        state: present
-    
-    - name: enable fail2ban jail(s)
-      blockinfile:
-        path: /etc/fail2ban/jail.d/from-ansible.conf
-        mode: '644'
-        create: yes
-        block: |
-          [sshd]
-          enabled = true
-    
-     # TODO: enable more as needed
-  
-    - name: enable fail2ban
-      service:
-        name: fail2ban
-        enabled: yes
-        state: started
-    # TODO: auto-update clamav data
-    # TODO: Auter or unattended-upgrade/yum-cron.  careful not to clobber chrome
-    # or auto-reboot a (local) machine.
+  include_tasks: security_setup.yml
+  become: yes
 
 - name: Add/configure user accounts
-  block:
+  include_tasks: user_accounts.yml
 
-    - name: Add /etc/ssh/authorized_keys
-      file:
-        path: /etc/ssh/authorized_keys
-        state: directory
-        mode: '0755'
-        owner: 0
-        group: 0
+# TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
 
-    - name: harden sshd
-      copy:
-        src: sshd_config
-        dest: /etc/ssh/sshd_config
-        mode: 0640
-        force: yes
-        backup: yes
-      notify: restart sshd
-
-    - name: Restart sshd if needed
-      meta: flush_handlers
-
-    - name: Set up user accounts
-      include_tasks: "roles/common/files/accounts/{{ item }}_account.yml"
-      loop: "{{ user_accounts }}"
-
-    - name: Disable root account
-      user:
-        name: root
-        password: '*'     
-
-  
-    # TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
-
-    - name: set hostname
-      hostname:
-        name: "{{ inventory_hostname }}"
+- name: set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
     
-    - name: set timezone
-      timezone:
-        name: America/New_York
+- name: set timezone
+  timezone:
+    name: America/New_York
       
   # - name: install ddclient
   #   # TODO: configure+start it

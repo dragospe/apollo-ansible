@@ -1,0 +1,65 @@
+- name: Keep postfix stopped
+  service:
+    name: postfix
+    state: stopped
+  become: yes
+
+- name: Harden sysctl
+  blockinfile:
+    path: /etc/sysctl.conf
+    block: |
+      fs.suid_dumpable = 0
+      kernel.core_uses_pid = 1
+      kernel.dmesg_restrict = 1
+      kernel.kptr_restrict = 2
+      kernel.yama.ptrace_scope = 2
+      net.ipv4.conf.all.accept_redirects = 0
+      net.ipv4.conf.all.send_redirects = 0
+      net.ipv4.conf.default.accept_redirects = 0
+      net.ipv4.conf.default.accept_source_route = 0
+      net.ipv6.conf.all.accept_redirects = 0
+      net.ipv6.conf.default.accept_redirects = 0
+
+- name: restrict umask
+  copy:
+    content: "umask 027\n"
+    dest: /etc/profile.d/custom_umask.sh
+    # TODO: in Ubuntu we should set it in /etc/login.defs
+    mode: 0644
+- name: install some security tools
+  package:
+    name:
+      - fail2ban
+      - clamav
+    state: present
+
+- name: enable fail2ban jail(s)
+  blockinfile:
+    path: /etc/fail2ban/jail.d/from-ansible.conf
+    mode: '644'
+    create: yes
+    block: |
+      [sshd]
+      enabled = true
+
+ # TODO: enable more as needed
+
+- name: enable fail2ban
+  service:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: harden sshd
+      copy:
+        src: sshd_config
+        dest: /etc/ssh/sshd_config
+        mode: 0640
+        force: yes
+        backup: yes
+      notify: restart sshd
+
+# TODO: auto-update clamav data
+# TODO: Auter or unattended-upgrade/yum-cron.  careful not to clobber chrome
+# or auto-reboot a (local) machine.
+

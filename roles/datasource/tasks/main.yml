@@ -1,2 +1,196 @@
----
-# tasks file for datasource
+- name: Install S3 drivers
+  include_tasks: install_s3.yml
+
+- name: Copy ssh keys
+  include_tasks: copy_keys.yml
+
+################################ REDCap API lib ################################
+- include_tasks: py_clone_install.yml
+  vars:
+    repo_name: redcapi
+    repo_url: git@bitbucket.org:atpage/redcapi.git
+    key_file: /home/apollo/.ssh/id_rsa
+
+############################### GENEActiv stuff ################################
+
+- include_tasks: py_clone_install.yml
+  vars:
+    repo_name: actigraph
+    repo_url: git@bitbucket.org:atpage/actigraph.git
+    key_file: /home/apollo/.ssh/id_rsa
+
+- include_tasks: py_clone_install.yml
+  vars:
+    repo_name: geneactiv
+    repo_url: git@bitbucket.org:atpage/geneactiv.git
+    key_file: /home/apollo/.ssh/id_rsa
+
+- name: compile geneactiv page parser
+  command: make lib
+  args:
+    chdir: /home/apollo/code/geneactiv/page_parser
+    creates: /home/apollo/code/geneactiv/page_parser/libgeneactivpage.so
+  become: yes
+  become_user: apollo
+
+- name: install geneactiv page parser
+  command: make install
+  args:
+    chdir: /home/apollo/code/geneactiv/page_parser
+    creates: /usr/local/lib/libgeneactivpage.so
+  become: yes
+
+# TODO: install python prereqs like progressbar, matplotlib
+
+################################## APOLLO DB ###################################
+
+- name: install sqlalchemy
+  pip:
+    name: sqlalchemy
+    executable: pip3
+  become: yes
+# TODO: that should be done automatically as a prereq of apollo_db
+# ('install_requires ...' in setup.py)
+# See: https://github.com/pypa/pip/issues/4780
+
+- include_tasks: py_clone_install.yml
+  vars:
+    repo_name: apollo_db
+    repo_url: git@bitbucket.org:atpage/apollo_db.git
+    key_file: /home/apollo/.ssh/id_rsa
+
+- name: copy REDCap token
+  copy:
+    src: redcap_secrets.py
+    # TODO: switch between dev/test and prod, like:
+    # src: "{{ '/home/apollo/code/apollo_ansible/secrets/redcap_secrets.py' if qol_mode == 'prod' else
+    #          '/home/apollo/code/apollo_ansible/secrets/redcap_secrets_test.py' }}"
+    dest: /home/apollo/code/apollo_db/loaders/redcap_secrets.py
+    owner: apollo
+    group: apollo
+    mode: 0640
+  become: yes
+  become_user: apollo
+
+# TODO: apollo_db/secrets.py.  note: different file for dev/test/prod because
+# they point to different database servers.
+
+############################## CIED report parser ##############################
+
+- name: install PDF utils
+  package:
+    name: poppler-utils
+    state: present
+  become: yes
+
+- include_tasks: py_clone_install.yml
+  vars:
+    repo_name: medtronic_pdf_parser
+    repo_url: git@bitbucket.org:atpage/medtronic_pdf.git
+    key_file: /home/apollo/.ssh/id_rsa
+
+############################## QOL survey manager ##############################
+
+- name: copy Chrome RPM to server
+  copy:
+    src: google-chrome-stable_current_x86_64.rpm
+    dest: /tmp/google-chrome-stable_current_x86_64.rpm
+    mode: 0644
+    force: no
+  # TODO: make sure this is actually copying when different, and installing below
+
+- name: install Chrome
+  yum:
+    name: /tmp/google-chrome-stable_current_x86_64.rpm
+    state: present
+  become: yes
+
+- name: copy selenium chrome driver to server
+  copy:
+    src: chromedriver
+    dest: /usr/local/bin/chromedriver
+    mode: 0755
+    #force: yes
+  become: yes
+
+# TODO: ensure chrome and webdriver versions are compatible (i.e. don't let
+# someone update chrome and break the webdriver).  at least make yum ignore
+# Chrome. (use yum versionlock?)
+
+- name: pip install selenium
+  pip:
+    name: selenium
+    executable: pip3
+  become: yes
+
+- name: download REDCap QOL selenium code
+  git:
+    repo: git@bitbucket.org:atpage/redcap_qol_hacks.git
+    dest: /home/apollo/code/redcap_qol_hacks
+    key_file: /home/apollo/.ssh/id_rsa
+  become: yes
+  become_user: apollo
+
+- name: copy REDCap token
+  copy:
+    src: "{{ 'redcap_secrets.py' if qol_mode == 'prod' else
+             'redcap_secrets_test.py' }}"
+    dest: /home/apollo/code/redcap_qol_hacks/redcap_secrets.py
+    owner: apollo
+    group: apollo
+    mode: 0640
+  become: yes
+  become_user: apollo
+
+- name: copy QOL script settings file
+  copy:
+    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if qol_mode == 'prod' else
+                 'PROJECT_NAME = \"APOLLO-AF (testing)\"' }}"
+    dest: /home/apollo/code/redcap_qol_hacks/proj_settings.py
+    owner: apollo
+    group: apollo
+    mode: 0640
+  become: yes
+  become_user: apollo
+
+- name: copy URMC creds for selenium to use
+  copy:
+    src: urmc_creds.py
+    dest: /home/apollo/code/redcap_qol_hacks/secrets.py
+    owner: apollo
+    group: apollo
+    mode: 0640
+  become: yes
+  become_user: apollo
+
+- name: install Xvfb
+  package:
+    name:
+      - "{{ 'xorg-x11-server-Xvfb' if ansible_os_family == 'RedHat' else 'xvfb' }}"
+    state: present
+  become: yes
+
+- name: send surveys daily
+  cron:
+    name: daily QOL surveys
+    user: apollo
+    job: "xvfb-run /home/apollo/code/redcap_qol_hacks/send_redcap_surveys.py -d"
+    minute: '0'
+    hour: '16'
+    disabled: no
+  become: yes
+  become_user: apollo
+- name: send surveys weekly
+  cron:
+    name: weekly QOL surveys
+    user: apollo
+    job: "xvfb-run /home/apollo/code/redcap_qol_hacks/send_redcap_surveys.py -r"
+    minute: '5'
+    hour: '16'
+    disabled: no
+  become: yes
+  become_user: apollo
+# TODO?: don't always enable on test (because then alex keeps getting emails)
+
+################################################################################
+
