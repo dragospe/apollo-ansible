@@ -29,4 +29,11 @@
   notify: restart postgresql
   when: postgresql_hba_entries
 
+- name: Add firewalld rule
+  firewalld:
+    service: postgresql
+    permanent: yes
+    state: enabled
+
+
 

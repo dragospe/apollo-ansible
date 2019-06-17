@@ -39,7 +39,7 @@
         dest: /etc/sudoers.d/50-custom-path
         mode: 0440
     
-   # TODO?: may need to reset_connection here.
+#    TODO?: may need to reset_connection here.
     - name: update pip
       pip:
         name: pip
@@ -48,7 +48,7 @@
       with_items:
         - pip2
         - pip3
-    
+   
     - name: enable ntpd
       service:
         name: "{{ 'ntpd'  if ansible_os_family == 'RedHat' else 'ntp' }}"
@@ -117,7 +117,14 @@
 - name: Add/configure user accounts
   block:
 
-    - import_tasks: alex_account.yaml
+    - name: Add /etc/ssh/authorized_keys
+      file:
+        path: /etc/ssh/authorized_keys
+        state: directory
+        mode: '0755'
+        owner: 0
+        group: 0
+
     - name: harden sshd
       copy:
         src: sshd_config
@@ -126,7 +133,15 @@
         force: yes
         backup: yes
       notify: restart sshd
-    
+
+    - name: Restart sshd if needed
+      meta: flush_handlers
+
+    - name: Set up user accounts
+      include_tasks: "roles/common/files/accounts/{{ item }}_account.yml"
+      loop: "{{ user_accounts }}"
+
+  
     # TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
 
     - name: set hostname

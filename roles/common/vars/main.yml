@@ -1,2 +1,6 @@
 ---
 # vars file for common
+user_accounts:
+  - alex
+  - peter
+  - apollo
