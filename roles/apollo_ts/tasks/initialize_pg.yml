@@ -1,0 +1,29 @@
+---
+- name: Ensure PostgreSQL data directory exists.
+  file:
+    path: "{{ apollo_ts_postgresql_data_dir }}"
+    owner: "{{ apollo_ts_postgresql_user }}"
+    group: "{{ apollo_ts_postgresql_group }}"
+    state: directory
+    mode: 0700
+
+- name: Check if PostgreSQL database is initialized.
+  stat:
+    path: "{{ apollo_ts_postgresql_data_dir }}/PG_VERSION"
+  register: pgdata_dir_version
+
+- name: Ensure PostgreSQL database is initialized.
+  command: "{{ apollo_ts_postgresql_bin_path}}/initdb -D {{ apollo_ts_postgresql_data_dir }}"
+  when: not pgdata_dir_version.stat.exists
+  become: true
+  become_user: "{{ apollo_ts_postgresql_user }}"
+  # See: https://github.com/ansible/ansible/issues/16048#issuecomment-229012509
+  vars:
+    ansible_ssh_pipelining: true
+  notify: restart postgresql
+
+- name: Start the postgresql-11 service
+  systemd:
+    name: postgresql-11
+    state: started
+

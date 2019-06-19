@@ -1,0 +1,1 @@
+common-dev ansible_host=192.168.122.244 ansible_user=root

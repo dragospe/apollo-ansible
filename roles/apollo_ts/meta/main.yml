@@ -1,7 +1,7 @@
 galaxy_info:
-  author: Peter Dragos
+  author: your name
   description: your description
-  company: University of Rochester, Medical Center
+  company: your company (optional)
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -35,10 +35,17 @@ galaxy_info:
   # To view available platforms and versions (or releases), visit:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
-  platforms:
-    - name: CentOS 7
-      versions:
-        - 7
+  # platforms:
+  # - name: Fedora
+  #   versions:
+  #   - all
+  #   - 25
+  # - name: SomePlatform
+  #   versions:
+  #   - all
+  #   - 1.0
+  #   - 7
+  #   - 99.99
 
   galaxy_tags: []
     # List tags for your role here, one per line. A tag is a keyword that describes
@@ -48,7 +55,6 @@ galaxy_info:
     # NOTE: A tag is limited to a single word comprised of alphanumeric characters.
     #       Maximum 20 tags per role.
 
-dependencies: 
+dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.
-  - role: ts_database

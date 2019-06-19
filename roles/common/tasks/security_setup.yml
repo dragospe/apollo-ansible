@@ -26,6 +26,7 @@
     dest: /etc/profile.d/custom_umask.sh
     # TODO: in Ubuntu we should set it in /etc/login.defs
     mode: 0644
+
 - name: install some security tools
   package:
     name:
@@ -51,13 +52,13 @@
     state: started
 
 - name: harden sshd
-      copy:
-        src: sshd_config
-        dest: /etc/ssh/sshd_config
-        mode: 0640
-        force: yes
-        backup: yes
-      notify: restart sshd
+  copy:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+    mode: 0640
+    force: yes
+    backup: yes
+  notify: restart sshd
 
 # TODO: auto-update clamav data
 # TODO: Auter or unattended-upgrade/yum-cron.  careful not to clobber chrome

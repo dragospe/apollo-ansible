@@ -1,3 +1,13 @@
 ---
-# defaults file for apollo_ts
-__postgresql_database_name: "apollo_ts"
+# defaults file for pg_database
+
+apollo_ts_postgresql_user: postgres
+apollo_ts_postgresql_group: postgres
+
+__apollo_ts_postgresql_data_dir: "/var/lib/pgsql/11/data"
+
+__apollo_ts_postgresql_bin_path: "/usr/pgsql-11/bin"
+
+__apollo_ts_postgresql_config_path: "/var/lib/pgsql/11/data"
+
+__apollo_ts_postgresql_database_name: apollo_ts

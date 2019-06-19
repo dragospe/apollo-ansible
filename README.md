@@ -2,7 +2,8 @@
 
 Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, and roles required to deploy the project.
 
-### Roles:
+## Role Overview:
+
 
 | Role        | Description                                                                                                                               |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------|
@@ -11,12 +12,16 @@ Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, 
 | common      | Common configuration applied to all hosts, including common software, user accounts, security hardening, etc.                             |
 | datasource  | Configures a host to act as a data source, for geneACTIV, medtronic, REDCap, etc.                                                         |
 | monitoring  | Configures a host to perform monitoring functions (grafana).                                                                              |
-| pg_database | Configures a host to run a postgreSQL database.                                                                                           |
-| ts_database | Configures a host to run timescaledb. Depends on pg_database.                                                                                                     |
 
-### Inventory
 
-The "hosts" file should be selected with the `-i` option. Group and host vars should be defined as follows:
+## Lifecycle Architecture
+
+
+This repository is designed to configure development (`dev`), testing (`test`), and production (`prod`) lifecycle enviornments. To do so, three different `inventory` files, `secrets.yml`, and `group_vars` and `host_vars` files are maintained under the "hosts" directory.
+
+A complete description of all variables (required or optional) that should be set of each *role* is found in the respective `README.md` file. 
+
+**NOTE:** In ansible, `group_vars` take precedence over variables in `roles/[rolename]/defaults/main.yml`. 
 
 
 ### Prerequisites

@@ -1,6 +1,0 @@
----
-# handlers file for pg_database
-- name: restart postgresql
-  systemd:
-    name: postgresql-11
-    state: restarted

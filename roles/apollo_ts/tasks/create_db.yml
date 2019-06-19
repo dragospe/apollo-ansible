@@ -1,0 +1,29 @@
+- name: Make sure postgres is running
+  systemd:
+    name: postgresql-11
+    state: started
+
+- name: Reload postgresql if needed
+  meta: flush_handlers
+
+- name: Create a database
+  postgresql_db:
+    name: "{{ apollo_ts_postgresql_database_name }}"
+    owner: "{{ apollo_ts_postgresql_user }}"
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+  become_user: "{{ apollo_ts_postgresql_user }}"
+  become: yes
+
+- name: Extend with timescaledb
+  # WARN: Ansible 2.7 does not have the "cascade option" 
+  postgresql_ext:
+    name: timescaledb
+    db: "{{ apollo_ts_postgresql_database_name }}"
+    #cascade: true
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+  become_user: "{{ apollo_ts_postgresql_user }}"
+  become: yes
+    
+ 

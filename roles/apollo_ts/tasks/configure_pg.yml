@@ -1,0 +1,76 @@
+- name: Set default user password
+  postgresql_user:
+    name: '{{ apollo_ts_postgresql_user }}'
+    password: '{{ apollo_ts_postgresql_user_password }}'
+    # The 'login_user' and 'login_password' are required here for the playbook to be idempotent.
+    # Otherwise, a second run of this will fail if pg_hba.conf has been modified.
+    login_user: '{{ apollo_ts_postgresql_user }}'
+    login_password: '{{ apollo_ts_postgresql_user_password }}'
+
+- name: Autostart postgres on boot
+  systemd: 
+    name: postgresql-11
+    enabled: yes
+
+- name: Add /usr/bin/pgsql-11 to $PATH
+  shell: echo '[[ ":$PATH:" != *":/usr/pgsql-11/bin:"* ]] && export PATH="$PATH:/usr/pgsql-11/bin"' > /etc/profile.d/pgpath.sh
+  args:
+    creates: /etc/profile.d/pgpath.sh
+
+- name: Ensure ~/ssl directory exists
+  file:
+    path: "~/ssl"
+    state: directory
+    mode: '0700'
+  become_user: '{{ apollo_ts_postgresql_user }}'
+  become: yes
+
+- name: Copy over SSL certificate
+  copy: 
+    src: '[{{ lifecycle_state }}]_apollo_ts_server.crt'  
+    dest: '~/ssl/[{{ lifecycle_state }}]_apollo_ts_server.crt'
+    mode: 0400
+    owner: '{{ apollo_ts_postgresql_user }}'
+    group: '{{ apollo_ts_postgresql_user }}'
+  become_user: '{{ apollo_ts_postgresql_user }}'
+  become: yes
+
+- name: Copy over SSL key
+  copy: 
+    src: '[{{ lifecycle_state }}]_apollo_ts_server.key'  
+    dest: '~/ssl/[{{ lifecycle_state }}]_apollo_ts_server.key'
+    mode: 0400
+    owner: '{{ apollo_ts_postgresql_user }}'
+    group: '{{ apollo_ts_postgresql_user }}'
+  become_user: '{{ apollo_ts_postgresql_user }}'
+  become: yes 
+
+- name: Configure postgresql.conf
+  template:
+    src: "postgresql.conf.j2"
+    dest: "{{ apollo_ts_postgresql_config_path }}/postgresql.conf"
+    owner: "{{ apollo_ts_postgresql_user }}"
+    group: "{{ apollo_ts_postgresql_group }}"
+    mode: 0600
+  notify: restart postgresql
+
+- name: Configure host based authentication (if entries are configured).
+  template:
+    src: "pg_hba.conf.j2"
+    dest: "{{ apollo_ts_postgresql_config_path }}/pg_hba.conf"
+    owner: "{{ apollo_ts_postgresql_user }}"
+    group: "{{ apollo_ts_postgresql_group }}"
+    mode: 0600
+  notify: reload postgresql
+
+
+- name: Add firewalld rule for postgresql
+  firewalld:
+    service: postgresql
+    permanent: yes
+    state: enabled
+    offline: yes
+    immediate: yes
+
+
+

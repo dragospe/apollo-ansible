@@ -1,12 +1,7 @@
-* Users are not allowed to manage their own authorized keys. SSHD looks in /etc/ssh/authorized_keys/%u instead
-
-
-
-
-Role Name
+Common
 =========
 
-A brief description of the role goes here.
+Common configuration applied to all hosts for the Apollo Project. This
 
 Requirements
 ------------

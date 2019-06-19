@@ -1,8 +1,26 @@
 ---
-# tasks file for apollo_ts
-- name: Set variables
-  include_tasks: variables.yml
+# tasks file for pg_database
+- name: Set facts
+  include_tasks: variables.yml 
 
-- name: Create a timescaledb database
-  include_tasks: create.yml
+- name: Install PostgreSQL
+  include_tasks: install_pg.yml
+  
+- name: Initialize the database
+  include_tasks: initialize_pg.yml
 
+- name: Configure PostgreSQL
+  include_tasks: configure_pg.yml
+
+#TODO:  Determine if the Timescaledb-postgresql-11 package is/should be signed. Appears not to be. 
+
+- name: Install TimescaleDB
+  include_tasks: install_ts.yml
+  when: ansible_os_family == 'RedHat'
+  become: yes
+
+- name: Create the timescaleDB database
+  include_tasks: create_db.yml
+
+- name: Create postgresql users
+  include_tasks: postgresql_accounts.yml    

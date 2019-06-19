@@ -1,5 +1,32 @@
 ---
-- name: Define postgresql_database_name
+# Variable configuration
+
+- name: Define the timescale database's data directory
+  set_fact: 
+    apollo_ts_postgresql_data_dir: "{{ __apollo_ts_postgresql_data_dir }}"
+  when: apollo_ts_postgresql_data_dir is not defined
+
+- name: Define the timescale database's binary path
   set_fact:
-      postgresql_database_name: "{{ __postgresql_database_name }}"
-  when: postgresql_database_name is not defined
+    apollo_ts_postgresql_bin_path: "{{ __apollo_ts_postgresql_bin_path }}"
+  when: apollo_ts_postgresql_bin_path is not defined
+
+- name: Define the timescale database's name
+  set_fact:
+    apollo_ts_postgresql_database_name: "{{ __apollo_ts_postgresql_database_name }}"
+  when: apollo_ts_postgresql_database_name is not defined
+
+- name: Define timescale database's configuration path
+  set_fact: 
+    apollo_ts_postgresql_config_path: "{{ __apollo_ts_postgresql_config_path }}" 
+  when: apollo_ts_postgresql_config_path is not defined
+
+- name: Define the default postgres user password
+  set_fact:
+    apollo_ts_postgresql_user_password: "{{lookup('file', 'default_postgresql_user_password')}}"
+
+- name: Define the apollo monitor user password
+  set_fact: 
+    apollo_ts_apollo_monitor_user_password: "{{ lookup('file', 'apollo_monitor_postgresql_password') }}"
+
+

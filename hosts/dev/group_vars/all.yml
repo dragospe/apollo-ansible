@@ -1,0 +1,3 @@
+lifecycle_state: dev
+apollo_ts_postgresql_listen_addresses: 
+  - '{{ ansible_default_ipv4.address }}'
