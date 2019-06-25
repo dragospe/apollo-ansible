@@ -1,2 +1,5 @@
 [apollo_ts]
-apollo_ts_dev ansible_host=192.168.122.27 ansible_user=peter
+apollo_ts_dev ansible_host=192.168.122.244 ansible_user=peter
+
+[apollo_monitor]
+apollo_monitor_dev ansible_host=192.168.122.13 ansible_user=peter

@@ -1,7 +1,15 @@
-Role Name
+apollo_monitor
 =========
+This role sets up the monitoring infrastructure for the apollo project. It currently sets up grafana.
 
-A brief description of the role goes here.
+
+Security
+-----------
+
+TODO: evaluate if the vaulted password for apollo_monitor_grafana_admin_password  is getting logged anywhere
+
+
+
 
 Requirements
 ------------

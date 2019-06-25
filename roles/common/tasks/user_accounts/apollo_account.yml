@@ -22,7 +22,7 @@
     state: present
     key: "{{ item }}"
   with_items:
-    - "{{ lookup('file', 'roles/common/files/accounts/keys/id_rsa_peter.pub') }}"
+    - "{{ lookup('file', 'keys/id_rsa_peter.pub') }}"
    # - "{{ lookup('file', 'roles/common/files/accounts/keys/id_rsa_urmc_aws.pub') }}"
   become: yes
 

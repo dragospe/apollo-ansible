@@ -23,4 +23,7 @@
   include_tasks: create_db.yml
 
 - name: Create postgresql users
-  include_tasks: postgresql_accounts.yml    
+  include_tasks: '{{ item }}'
+  with_fileglob:
+    - "user_accounts/*.yml"
+ 

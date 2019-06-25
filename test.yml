@@ -1,4 +1,0 @@
-- hosts: all
-  roles:
-    - apollo_ts
-  become: yes

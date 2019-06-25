@@ -1,6 +1,7 @@
 - name: Set up user accounts
-  include_tasks: "roles/common/files/accounts/{{ item }}_account.yml"
-  loop: "{{ user_accounts }}"
+  include_tasks: "{{ item }}"
+  with_fileglob:
+    - "user_accounts/*.yml"
 
 - name: Disable root account
   user:

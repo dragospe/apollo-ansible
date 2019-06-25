@@ -1,0 +1,6 @@
+---
+# handlers file for monitoring
+- name: restart grafana
+  systemd:
+    name: grafana-server
+    state: restarted

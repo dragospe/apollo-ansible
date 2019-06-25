@@ -382,12 +382,12 @@ log_rotation_size = 0			# Automatic rotation of logfiles will
 #debug_print_plan = off
 #debug_pretty_print = on
 #log_checkpoints = off
-#log_connections = off
+log_connections = on
 #log_disconnections = off
 #log_duration = off
 #log_error_verbosity = default		# terse, default, or verbose messages
 #log_hostname = off
-log_line_prefix = '%m [%p] '		# special values:
+log_line_prefix = '%m [%p] %r '		# special values:
 					#   %a = application name
 					#   %u = user name
 					#   %d = database name
@@ -627,3 +627,5 @@ max_locks_per_transaction = 64		# min 10
 timescaledb.max_background_workers = 8
 timescaledb.last_tuned = '2019-06-19T09:32:42-04:00'
 timescaledb.last_tuned_version = '0.6.0'
+
+

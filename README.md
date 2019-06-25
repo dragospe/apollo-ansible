@@ -1,6 +1,6 @@
 # apollo_ansible
 
-Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, and roles required to deploy the project.
+Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, and roles required to deploy and configure the project.
 
 ## Role Overview:
 
@@ -14,10 +14,10 @@ Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, 
 | monitoring  | Configures a host to perform monitoring functions (grafana).                                                                              |
 
 
-## Lifecycle Architecture
+## Lifecycle Environments
 
 
-This repository is designed to configure development (`dev`), testing (`test`), and production (`prod`) lifecycle enviornments. To do so, three different `inventory` files, `secrets.yml`, and `group_vars` and `host_vars` files are maintained under the "hosts" directory.
+This repository is designed to configure development (`dev`), testing (`test`), and production (`prod`) lifecycle enviornments. To do so, three different `inventory` files, `secrets.yml`, and `group_vars` and `host_vars` files are maintained under the "hosts/[env]/" directories.
 
 A complete description of all variables (required or optional) that should be set of each *role* is found in the respective `README.md` file. 
 
@@ -34,11 +34,15 @@ A complete description of all variables (required or optional) that should be se
 
 ## Deployment
 
-Run this to configure everything:
+Run this to configure everything on the `test` environment:
 
-    ansible-playbook playbook.yaml --vault-password-file secrets/vault_pass.txt [-K]
+    ansible-playbook site.yml -i hosts/test/inventory --vault-password-file secrets/vault_pass.txt [-K]
 
-`-K` is only needed for local sudo.
+(`-K` is only needed for local sudo.)
+
+Run this to configure just the timeseries database on the `dev` environment:
+
+    ansible-playbook apollo_ts.yml -i hosts/dev/inventory --vault-password-file secrets/vault_pass.txt  
 
 ## Authors
 

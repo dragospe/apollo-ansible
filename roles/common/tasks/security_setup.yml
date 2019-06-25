@@ -34,16 +34,22 @@
       - clamav
     state: present
 
-- name: enable fail2ban jail(s)
-  blockinfile:
+- name: Create fail2ban jail conf file
+  lineinfile:
+    path: /etc/fail2ban/jail.d/from-ansible.conf
+    line: '### Ansible Managed: Manually entered data may be overwritten ###'
+    create: yes
+
+- name: enable fail2ban ssh jail(s)
+  ini_file:
     path: /etc/fail2ban/jail.d/from-ansible.conf
     mode: '644'
     create: yes
-    block: |
-      [sshd]
-      enabled = true
+    section: sshd
+    option: enabled
+    value: true
+      
 
- # TODO: enable more as needed
 
 - name: enable fail2ban
   service:

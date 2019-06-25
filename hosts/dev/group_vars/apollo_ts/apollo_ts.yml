@@ -1,8 +1,8 @@
 ---
 apollo_ts_postgresql_user: postgres
 apollo_ts_postgresql_group: postgres
-apollo_ts_client_ip_address: 0.0.0.0/0
-apollo_ts_postgresql_database_name: apollo_ts_pg_dev
+apollo_ts_apollo_monitor_ip_address: 0.0.0.0/0
+apollo_ts_postgresql_database_name: 'apollo_ts_pg_dev'
 
 ## Host based authentication (hba) entries to be added to the pg_hba.conf. 
 # See: https://www.postgresql.org/docs/11/auth-pg-hba-conf.html
@@ -14,15 +14,12 @@ apollo_ts_postgresql_hba_entries:
 
 
   ### Default Entries (do not edit) ###
-  # Give the standard user access to the default postgres database (required for management via ansible (?))
-  - {type: local, database: postgres, user: '{{ apollo_ts_postgresql_user }}', auth_method: md5}
-  - {type: hostssl, database: postgres, user: '{{ apollo_ts_postgresql_user }}', address: '127.0.0.1/8', auth_method: md5}
-  - {type: hostssl, database: postgres, user: '{{ apollo_ts_postgresql_user }}', address: '0::1/128', auth_method: md5}
+  # Give apollo_montior access to the apollo_ts timeseries tb
+  - {type: hostssl, database: '{{ apollo_ts_postgresql_database_name }}' , user: apollo_monitor, address: '{{apollo_ts_apollo_monitor_ip_address }}', auth_method: md5}
 
 
-  # Give the standard user access to the apollo_ts database
-  - {type: local, database: '{{ apollo_ts_postgresql_database_name }}', user: '{{ apollo_ts_postgresql_user }}', auth_method: md5}
-  - {type: hostssl, database: '{{ apollo_ts_postgresql_database_name }}', user: '{{ apollo_ts_postgresql_user }}', address: '127.0.0.1/8', auth_method: md5}
-  - {type: hostssl, database: '{{ apollo_ts_postgresql_database_name }}', user: '{{ apollo_ts_postgresql_user }}', address: '0::1/128', auth_method: md5}
-  
-  
+  # Give the standard user access local access to all databases.
+  - {type: local, database: all, user: '{{ apollo_ts_postgresql_user }}', auth_method: md5}
+  - {type: host, database: all, user: '{{ apollo_ts_postgresql_user }}', address: '127.0.0.1/8', auth_method: md5}
+  - {type: host, database: all, user: '{{ apollo_ts_postgresql_user }}', address: '0::1/128', auth_method: md5}
+

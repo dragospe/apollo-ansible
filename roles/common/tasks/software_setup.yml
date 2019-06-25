@@ -16,6 +16,7 @@
       - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
       - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
       - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
+      - policycoreutils-python
     state: present
 
 - name: ensure /usr/local/bin is in PATH (for normal login)

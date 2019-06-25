@@ -24,7 +24,7 @@
   authorized_key:
     user: peter
     state: present
-    key: "{{ lookup('file', 'roles/common/files/accounts/keys/id_rsa_peter.pub') }}"
+    key: "{{ lookup('file', 'keys/id_rsa_peter.pub') }}"
   become: yes
 
 - name: set up git config for Peter

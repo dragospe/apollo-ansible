@@ -1,6 +1,12 @@
 apollo_ts
 =========
 
+**TODO/WARN:**
+-----------------
+fail2ban has some SELinux issue when reading the log files for postgresql. The relevant contexts are currently running in the permissive mode. 
+
+Synopsis
+-----------
 This role configures a host to work as the timeseries database for the apollo project. It consists of a postgreSQL 11 database server with the timescale extension. It pulls directly from the PostgreSQL Global Development Group (PGDG) and timescaledb repositories.
 
 Requirements
@@ -25,18 +31,19 @@ A description of the variables that may be set by users of this role can be foun
 
 | Variable:                            	| Choices/Defaults:                                                                                                                                                                	| Declared in:                                                                      	| Comments:                                                           	|
 |--------------------------------------	|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|-----------------------------------------------------------------------------------	|---------------------------------------------------------------------	|
-| apollo_ts_postgresql_user            	| *Default*: postgres                                                                                                                                                              	|   hosts/[env]/group_vars/all/apollo_ts.yml <br> roles/apollo_ts/defaults/main.yml 	| The primary postgres user                                           	|
-| apollo_ts_postgresql_group           	| *Default*: postgres                                                                                                                                                              	| hosts/[env]/group_vars/all/apollo_ts.yml <br> roles/apollo_ts/defaults/main.yml   	| The primary postgres group                                          	|
+| apollo_ts_postgresql_user            	| *Default*: postgres                                                                                                                                                              	|   hosts/[env]/group_vars/apollo_ts/apollo_ts.yml <br> roles/apollo_ts/defaults/main.yml 	| The primary postgres user                                           	|
+| apollo_ts_postgresql_group           	| *Default*: postgres                                                                                                                                                              	| hosts/[env]/group_vars/apollo_ts/apollo_ts.yml <br> roles/apollo_ts/defaults/main.yml   	| The primary postgres group                                          	|
 | __apollo_ts_postgresql_data_dir      	|  *Default*: `var/lib/pgsql/11/data`                                                                                                                                              	| roles/apollo_ts/defaults/main.yml                                                 	| The data postgresql data directory                                  	|
 | __apollo_ts_postgresql_bin_path      	| *Default*: `/usr/pgsql-11/bin`                                                                                                                                                   	| roles/apollo_ts/defaults/main.yml                                                 	| The directory containing postgres-related binaries                  	|
 | __apollo_ts_postgresql_config_path   	| *Default*: `/var/lib/pgsql/11/data`                                                                                                                                              	| roles/apollo_ts/defaults/main.yml                                                 	| The directory containing configuration data, e.g. `postgesql.conf`. 	|
-| apollo_ts_postgresql_hba_entries     	| *Format*: A list of dictionaries, expecting the following keys: <br> 'type', 'database, 'user', 'auth_method', 'address', 'ip_address', 'ip_mask', 'auth_method', 'auth_options' 	| hosts/[env]/group_vars /apollo_ts.yml                                             	| See https://www.postgresql.org/docs/11/auth-pg-hba-conf.html        	|
-| __apollo_ts_postgresql_database_name 	| *Format*: string                                                                                                                                                                 	|  hosts/[env]/group_vars/apollo_ts.yml                                            	| The name of the timeseries database.                                	|
-| apollo_ts_postgresql_listen_address  	| *Format*: List of IP addresses                                                                                                                                                          	| hosts/[env]/group_vars/apollo_ts.yml                                                                                  	|                                                                     	|
+| apollo_ts_postgresql_hba_entries     	| *Format*: A list of dictionaries, expecting the following keys: <br> 'type', 'database, 'user', 'auth_method', 'address', 'ip_address', 'ip_mask', 'auth_method', 'auth_options' 	| hosts/[env]/group_vars /apollo_ts/apollo_ts.yml                                             	| See https://www.postgresql.org/docs/11/auth-pg-hba-conf.html        	|
+| __apollo_ts_postgresql_database_name 	| *Format*: string                                                                                                                                                                 	|  hosts/[env]/group_vars/apollo_ts/apollo_ts.yml                                            	| The name of the timeseries database.                                	|
+| apollo_ts_postgresql_listen_addresses  	| *Format*: YAML list of IP addresses                                                                                                                                                          	| hosts/[env]/group_vars/all.yml                  	|IP addresses that the postgres server will listen on. Note: 127.0.0.1/8                                                                    is configured directly in the template file. 	|
+| apollo_ts_apollo_monitor_ip_address | *Format*: a single ip address or range | hosts/[env]/group_vars/apollo_ts.yml | The ip address with which apollo_monitor should be granted access to the apollo timeseries database from (a la `pg_hba.conf`). |
 
 
 
-Environment Notes
+Lifecycle Environment Notes
 -----------------
 
 **[dev]:**
@@ -45,13 +52,23 @@ The development enviroment uses self-signed ssl certificates. The following file
 * The certificate authority signing key is stored under `hosts/dev/files/cakey.pem`. 
 * The certificate authority certificate is stored under `hosts/dev/files/cacert.pem`. 
 
+Security Notes:
+------------------
+By default, newly create databases and users with this server have permissions restricted. All privileges on the "public" schema are restricted in the "template1" database. User-level restrictions should be set in the appropriate `user_accounts` file (see below.) Host-level access control should be set in the `apollo_ts_postgresql_hba_entries` variable under `hosts/[env]/group_vars/apollo_ts/apollo_ts.yml`; local password access is allowed to all databases for the superuser. Fail2Ban is configured to detect ONLY failed password attempts.  TLS is configured for the postgresql server. SELinux is configured. 
+
+
+PostgreSQL User Accounts:
+--------------
+
+All `.yml` files under `tasks/user_accounts/` will be executed to create postgresql users/roles. All user configurations should be stored in YAML files in this directory.
+
 
 Role Usage:
 ----------------
 Before the first run:
 
 * Set environment-specific variables in the `hosts/[env]/group_vars/apollo_ts/apollo_ts.yml` file.
-* Supply the required files (see ** Requirements > Required Files ** in this document.
+* Supply the required files (see ** Requirements > Required Files ** in this document).
 * Supply the vault password
 
 Example Playbook (applying the `apollo_ts` role to hosts in the `apollo_ts` group):
@@ -74,5 +91,6 @@ To be determined
 
 Author Information
 ------------------
-Alex Page, <alex.page@urmc.rochester.edu>
-Peter Dragos, <pdragos@u.rochester.edu>
+
+* Alex Page, <alex.page@urmc.rochester.edu>
+* Peter Dragos, <pdragos@u.rochester.edu>

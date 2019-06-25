@@ -72,5 +72,53 @@
     offline: yes
     immediate: yes
 
+- name: Setup Fail2Ban for postgresql
+  block:
 
+    - name: Enable postgresql in the jail.d/from-ansible.conf file
+      ini_file:
+        path: /etc/fail2ban/jail.d/from-ansible.conf
+        section: postgresql
+        option: '{{ item.option }}'
+        value: '{{ item.value }}'
+      with_items:
+        - { option: enabled, value: true}
+        - { option: filter, value: postgresql}
+        - { option: logpath, value: '{{apollo_ts_postgresql_config_path}}/log/*'}
+        - { option: action, value: 'iptables[name=postgresql, port=postgresql, protocol=tcp]'}
+        - { option: maxretry, value: 5}
 
+    - name: Create filters.d/postgresql.conf
+      lineinfile:
+        path: /etc/fail2ban/filter.d/postgresql.conf
+        create: yes
+        line: '### Ansible Managed: Manually entered contents may be overwritten. ###'
+        
+    - name: Set postgresql.conf filter
+      ini_file:
+        path: /etc/fail2ban/filter.d/postgresql.conf
+        section: Definition
+        option: failregex
+        value: '.* <HOST>\(\d*\) FATAL: .* authentication failed.*'
+
+    - name: 'Set Fail2Ban to permissive [TODO: Figure out appropriate policy]'
+      selinux_permissive:
+        name: fail2ban_t
+        permissive: yes
+        
+
+    - name: 'Set fail2ban client to permissive [TODO: figure out appropriate policy]'
+      selinux_permissive:
+        name: fail2ban_client_t
+        permissive: yes
+
+- name: Revoke all privileges from "public" role on database schema "public" for database template.
+  postgresql_privs:
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+    db: template1
+    privs: CREATE,USAGE
+    state: absent
+    type: schema
+    objs: public
+    roles: PUBLIC

@@ -1,0 +1,52 @@
+- name: Create apollo_monitor user
+  postgresql_user:
+    db: "{{ apollo_ts_postgresql_database_name }}"
+    name: apollo_monitor
+    password: "{{ apollo_ts_apollo_monitor_user_password }}"
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+    
+
+- name: Revoke all privleges for apollo_monitor
+  postgresql_privs:
+    db: "{{ apollo_ts_postgresql_database_name }}"
+    role: apollo_monitor
+    privs: ALL
+    state: absent
+    objs: ALL_IN_SCHEMA
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+
+- name: Grant usage to public schema for apollo_monitor
+  postgresql_privs:
+    db: "{{ apollo_ts_postgresql_database_name }}"
+    role: apollo_monitor
+    privs: USAGE
+    type: schema
+    objs: public
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+    
+    
+
+- name: Set default apollo_monitor user read permissions on the timeseries database (public schema)
+  postgresql_privs:
+    db: "{{ apollo_ts_postgresql_database_name }}"
+    role: apollo_monitor
+    privs: SELECT
+    type: default_privs
+    objs: TABLES
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+    
+
+- name: Set actual read permission for apollo_monitor
+  postgresql_privs:
+    db: "{{ apollo_ts_postgresql_database_name }}"
+    role: apollo_monitor
+    privs: SELECT
+    objs: ALL_IN_SCHEMA
+    state: present
+    login_user: "{{ apollo_ts_postgresql_user }}"
+    login_password: "{{ apollo_ts_postgresql_user_password }}"
+    

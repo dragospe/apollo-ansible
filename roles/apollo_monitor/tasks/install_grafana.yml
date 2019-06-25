@@ -1,6 +1,3 @@
----
-# tasks file for monitoring
-
 - name: Add grafana repository
     # TODO: https://grafana.com/docs/installation/debian/#apt-repository for deb version
   yum_repository:
@@ -28,11 +25,3 @@
     state: started
     enabled: yes
   become: yes
-
-- name: Add firewalld rule
-  firewalld:
-  port: 3000/tcp
-  permanent: yes
-  state: enabled
-
-

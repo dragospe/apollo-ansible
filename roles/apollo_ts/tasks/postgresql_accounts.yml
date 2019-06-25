@@ -1,7 +1,0 @@
-- name: Create apollo_monitor user
-  postgresql_user:
-    db: "{{ apollo_ts_postgresql_database_name }}"
-    name: apollo_monitor
-    password: "{{ apollo_ts_apollo_monitor_user_password }}"
-    login_user: "{{ apollo_ts_postgresql_user }}"
-    login_password: "{{ apollo_ts_postgresql_user_password }}"

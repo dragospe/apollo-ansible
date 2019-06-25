@@ -1,0 +1,11 @@
+---
+# tasks file for apollo_monitor
+
+- name: Install grafana
+  include_tasks: install_grafana.yml
+
+- name: Configure grafana
+  include_tasks: configure_grafana.yml
+
+
+
