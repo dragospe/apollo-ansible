@@ -1,0 +1,6 @@
+- include_tasks: 'user_accounts/create.yml'
+  vars:
+    apollo_monitor_grafana_common_name: 'Alex Page'
+    apollo_monitor_grafana_email: alex.page@rochester.edu
+    apollo_monitor_grafana_username: atpage
+    apollo_monitor_grafana_user_password: test

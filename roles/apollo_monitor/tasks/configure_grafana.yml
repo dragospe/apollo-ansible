@@ -55,7 +55,6 @@
     - { section: server, option: cert_key, value: '/usr/share/grafana/tls/tls.key' }
   
     ### [security] section ###
-    - { section: security, option: admin_password, value: "{{ apollo_monitor_grafana_admin_password }}"}
     - { section: security, option: cookie_secure, value: true }
     - { section: security, option: strict_transport_security, value: true }
     - { section: security, option: strict_transport_security_preload, value: true }
@@ -63,16 +62,11 @@
     - { section: security, option: x_content_type_options, value: true }
     - { section: security, option: x_xss_protection, value: true }
   notify: restart grafana
-  no_log: true
+  
 
-- name: Change grafana admin password
-  uri: 
-    url: '{{ apollo_monitor_root_url }}/api/admin/users/1/password'  
-    method: put
-    user: admin
-    password: admin
-    body: 
-      password: '{{ apollo_monitor_grafana_admin_password }}'
+- debug:  
+    msg: '{{ apollo_monitor_root_url }}/api/admin/users/1/password'  
+
 
 - name: Add firewalld rule
   firewalld:
@@ -81,4 +75,17 @@
     state: enabled
     offline: yes
     immediate: yes
+
+- name: Change grafana admin password (ignoring if already changed).
+      uri: 
+        url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"  
+        method: put
+        url_username: 'admin'
+        url_password: 'admin'
+        body: 
+          password: '{{ apollo_monitor_grafana_admin_password }}' 
+        body_format: json
+        force_basic_auth: yes
+  ignore_errors: yes  
+
 

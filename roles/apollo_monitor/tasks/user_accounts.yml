@@ -1,0 +1,6 @@
+# This file will provision user accounts in grafana using the http api. 
+
+---
+
+- include_tasks: '{{ item }}'
+  with_fileglob: 'user_accounts/*_account.yml'
