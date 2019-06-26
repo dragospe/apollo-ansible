@@ -9,4 +9,17 @@
 
 - name: Set up user accounts
   include_tasks: user_accounts.yml
-  
+    
+- name: Provision dashboards
+  include_tasks: provision_dashboards.yml
+
+- name: Provision datasources
+  include_tasks: provision_datasources.yml
+   
+   
+   
+   
+   
+   
+   
+   

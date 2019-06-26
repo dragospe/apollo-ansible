@@ -48,8 +48,7 @@
     ### [server] section ###
     - { section: server, option: protocol, value: https}
     - { section: server, option: domain, value: '{{ apollo_monitor_domain }}'}
-    # TODO: Uncomment this. Prevents DNS rebinding attacks, but DNS is not yet setup:
-    #- { section: server, option: enforce_domain, value: true}
+    - { section: server, option: enforce_domain, value: true}
     - { section: server, option: root_url, value: '{{ apollo_monitor_root_url}}' }
     - { section: server, option: cert_file, value: '/usr/share/grafana/tls/tls.crt'}
     - { section: server, option: cert_key, value: '/usr/share/grafana/tls/tls.key' }
@@ -63,11 +62,6 @@
     - { section: security, option: x_xss_protection, value: true }
   notify: restart grafana
   
-
-- debug:  
-    msg: '{{ apollo_monitor_root_url }}/api/admin/users/1/password'  
-
-
 - name: Add firewalld rule
   firewalld:
     port: 3000/tcp
@@ -77,15 +71,15 @@
     immediate: yes
 
 - name: Change grafana admin password (ignoring if already changed).
-      uri: 
-        url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"  
-        method: put
-        url_username: 'admin'
-        url_password: 'admin'
-        body: 
-          password: '{{ apollo_monitor_grafana_admin_password }}' 
-        body_format: json
-        force_basic_auth: yes
+  uri: 
+      url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"  
+      method: put
+      url_username: 'admin'
+      url_password: 'admin'
+      body: 
+        password: '{{ apollo_monitor_grafana_admin_password }}' 
+      body_format: json
+      force_basic_auth: yes
   ignore_errors: yes  
 
 

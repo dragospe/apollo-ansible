@@ -47,7 +47,7 @@
     create: yes
     section: sshd
     option: enabled
-    value: true
+    value: 'true'
       
 
 
@@ -64,7 +64,8 @@
     mode: 0640
     force: yes
     backup: yes
-  notify: restart sshd
+  notify: reload sshd
+
 
 # TODO: auto-update clamav data
 # TODO: Auter or unattended-upgrade/yum-cron.  careful not to clobber chrome

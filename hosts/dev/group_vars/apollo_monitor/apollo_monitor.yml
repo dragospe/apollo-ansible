@@ -1,2 +1,2 @@
-apollo_monitor_domain: localhost 
-apollo_monitor_root_url: https://localhost:3000
+apollo_monitor_domain: apollo_monitor.dev 
+apollo_monitor_root_url: https://apollo_monitor.dev:3000

@@ -1,7 +1,7 @@
 - name: Set up user accounts
   include_tasks: "{{ item }}"
   with_fileglob:
-    - "user_accounts/*.yml"
+    - "user_accounts/*_account.yml"
 
 - name: Disable root account
   user:

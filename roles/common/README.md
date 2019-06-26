@@ -1,38 +1,36 @@
+
 Common
 =========
+Synopsis
+----
 
-Common configuration applied to all hosts for the Apollo Project. This
+Common configuration applied to all hosts for the Apollo Project.  It sets up common software, does a baseline security configuration, and adds/configures user accounts. 
+
+This role should be run as root, since no other accounts will have been configured. Note that this role disables the root account, so you must add at least one account with root privileges (see below.)
 
 Requirements
 ------------
+This role targets a CentOS 7 minimal installation. 
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
 
-Role Variables
+Variables
 --------------
+Global, user-defined variables are listed below:
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+**No user-defined variables are in this role at this time**
 
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
-
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
+Add Users
+-----
+This role disables password access for the root account. Therefore, it is ~~highly advised~~ mandatory to setup an administrative account.
+All files matching the `tasks/user_accounts/*_account.yml` glob will be executed by this role. Use this to setup your accounts, permissions, configurations, SSH, etc.
+ 
 License
 -------
-
-BSD
+TBD 
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+* Alex Page, <alex.page@rochester.edu>
+* Peter Dragos, <pdragos@u.rochester.edu>
+

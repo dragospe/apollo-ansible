@@ -1,0 +1,18 @@
+- include_tasks: 'user_accounts/create.yml'
+  vars:
+    # User's real name
+    apollo_monitor_grafana_common_name: 'Common name'
+    # User's email
+    apollo_monitor_grafana_email: email@example.com
+    # Login username
+    apollo_monitor_grafana_username: template_user
+    # Vaulted password
+    apollo_monitor_grafana_user_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          12341234132412341234637356436396234616339633461643335383530313931386535613435643766623563
+          6264303333333265663663396662633763373839633831650a643736653634376564643761643738
+          65626465376432373863306566656131626262363466326166613231653466653136353162353333
+          6434313730623934320a653536333939656234353334326561356263613931656262613031633138
+          63396334666461336132313562626138656432323339336537336436363939326466
+    # Set to true to make the user a server administrator
+    apollo_monitor_grafana_user_isGrafanaAdmin: false

@@ -3,12 +3,9 @@
 
 - name: Common software setup
   include_tasks: software_setup.yml
-  become: yes
-
 
 - name: Security stuff
   include_tasks: security_setup.yml
-  become: yes
 
 - name: Add/configure user accounts
   include_tasks: user_accounts.yml

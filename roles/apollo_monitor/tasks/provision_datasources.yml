@@ -1,0 +1,8 @@
+- name: Copy datasources
+  copy:
+    src: '{{ item }}'
+    dest: /etc/grafana/provisioning/datasources/
+    mode: 0600
+    owner: grafana
+    group: grafana
+  with_fileglob: 'datasources/*.yml'

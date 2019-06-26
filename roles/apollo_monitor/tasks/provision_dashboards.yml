@@ -1,0 +1,27 @@
+- name: Create "dashboards" directory
+  file:
+    path: /var/lib/grafana/dashboards
+    owner: grafana
+    group: grafana
+    mode: 0700
+    state: directory 
+
+- name: Copy over provisioned dashboard files
+  copy: 
+    src: '{{ item }}'
+    dest: /var/lib/grafana/dashboards/
+    mode: 0600
+    owner: grafana
+    group: grafana
+  with_fileglob: 
+    - 'dashboards/*.json'
+
+- name: Copy over dashboard provider file
+  copy: 
+    src: '{{ item }}'
+    dest: /etc/grafana/provisioning/dashboards/
+    mode: 0600
+    owner: grafana
+    group: grafana
+  with_fileglob:
+    - 'dashboards/*.yml'
