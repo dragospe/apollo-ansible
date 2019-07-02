@@ -1,1 +1,5 @@
+### Inventory-wide variable declarations ###
+# 
+# See the main README file for explainations of these variables.
+
 lifecycle_state: test

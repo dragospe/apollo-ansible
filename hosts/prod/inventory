@@ -1,0 +1,25 @@
+### Dev inventory file ###
+# Variables declared in the `hosts/[lifecycle state]/group_vars/all.yml` file 
+# will apply to every host listed here. To set variables relevant to particular 
+# groups,declare them in a YAML file inside the 
+# `host/[lifecycle state]/group_vars/[group name]/` directory. Host-level 
+# variables may be declared in the `hosts/[lifecycle state]/host_vars/` 
+# directory.
+#
+# Hosts and users should be declared as options to inventory entires.
+# 
+# Sample entry:
+#   
+#   [apollo_ts]
+#   apollo_ts-prod ansible_host=192.168.122.244 ansible_user=peter
+#
+
+[apollo_pg]
+
+[apollo_ts]
+
+[apollo_monitor]
+
+[apollo_ds]
+
+

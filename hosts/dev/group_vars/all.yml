@@ -1,4 +1,6 @@
+### Inventory-wide variable declarations ###
+# 
+# See the main README file for explainations of these variables.
+
 lifecycle_state: dev
-apollo_ts_postgresql_listen_addresses: 
-  - '{{ ansible_default_ipv4.address }}'
 

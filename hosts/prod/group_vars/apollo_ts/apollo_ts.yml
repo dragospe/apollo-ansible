@@ -9,7 +9,7 @@
 apollo_ts_postgresql_user: postgres
 apollo_ts_postgresql_group: postgres
 apollo_ts_apollo_monitor_ip_address: 0.0.0.0/0
-apollo_ts_postgresql_database_name: 'apollo_ts_pg_dev'
+apollo_ts_postgresql_database_name: 'apollo_ts_pg'
 apollo_ts_postgresql_listen_addresses: 
   - '{{ ansible_default_ipv4.address }}'
 
