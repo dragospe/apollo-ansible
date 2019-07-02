@@ -17,9 +17,11 @@
 [apollo_pg]
 
 [apollo_ts]
+apollo_ts-dev ansible_host=192.168.122.142 ansible_user=peter
 
 [apollo_monitor]
+apollo_monitor-dev ansible_host=192.168.122.77 ansible_user=peter
 
-[apollo_ds]
-
+[apollo_scripts]
+apollo_scripts-dev ansible_host=192.168.122.62 ansible_user=peter
 

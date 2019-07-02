@@ -1,27 +1,4 @@
 
-- hosts: scripts
-  tasks:
-  
-  # TODO: grafana setup, tls, dns, etc.
-  - import_tasks: apollo_code.yaml
-
-# - hosts: oauth
-#   # remote_user: centos
-#   # become: yes
-#   tasks:
-#   - name: ensure apache is at the latest version
-#     yum:
-#       name: httpd
-#       state: latest
-#     become: yes
-#   # - name: write the apache config file
-#   #   template:
-#   #     src: /srv/httpd.j2
-#   #     dest: /etc/httpd.conf
-#   #   - name: ensure that postgresql is started
-#   #     service:
-#   #       name: postgresql
-#   #       state: started
 
 - hosts: databases
   vars:

@@ -1,3 +1,4 @@
+
 # apollo_ansible
 
 Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, and roles required to deploy and configure the project.
@@ -7,21 +8,32 @@ Ansible setup for the APOLLO-AF project. This repo consists of inventory, vars, 
 
 | Role        | Description                                                                                                                               |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| apollo_monitor  | Configures a host to perform monitoring functions (grafana).                                                                              |
 | apollo_pg   | Configures a host running postgreSQL to function as apollo's long-term data store.                                                        |
-| apollo_ts   | Configures a host running postgreSQL and timescaledb to function as apollo's timeseries database. Depends on pg_database and ts_database. |
+| apollo_scripts  | Configures a host to run scripts related to geneACTIV, medtronic, REDCap, etc.                                                         |
+| apollo_ts   | Configures a host running postgreSQL and timescaledb to function as apollo's timeseries database. |
 | common      | Common configuration applied to all hosts, including common software, user accounts, security hardening, etc.                             |
-| datasource  | Configures a host to act as a data source, for geneACTIV, medtronic, REDCap, etc.                                                         |
-| monitoring  | Configures a host to perform monitoring functions (grafana).                                                                              |
+
+
 
 
 ## Lifecycle Environments
 
 
-This repository is designed to configure development (`dev`), testing (`test`), and production (`prod`) lifecycle enviornments. To do so, three different `inventory` files, `secrets.yml`, and `group_vars` and `host_vars` files are maintained under the "hosts/[env]/" directories.
+This repository is designed to configure development (`dev`), testing (`test`), and production (`prod`) lifecycle enviornments. To do so, three different inventory files in their respective directories under the `hosts/[lifecycle state]/` directory. 
 
-A complete description of all variables (required or optional) that should be set of each *role* is found in the respective `README.md` file. 
+Variables specific to each lifecycle state may be set in accordance with inventory-based variables ([`group_vars`](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#assigning-a-variable-to-many-machines-group-variables)  , [`host_vars`](https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html#assigning-a-variable-to-one-machine-host-variables), etc.)
 
-**NOTE:** In ansible, `group_vars` take precedence over variables in `roles/[rolename]/defaults/main.yml`. 
+*Note:* In ansible, `group_vars` take precedence over variables in `roles/[rolename]/defaults/main.yml`. 
+
+### Variables
+Variables that relate to site-wide or lifecycle-wide configuration are listed below.
+
+Complete descriptions of *role-specific* variables (required or optional) may be found in the respective `README.md` files. 
+
+|Variable      | Description                                                                                                                               |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+|lifecycle_state|: Either 'dev', 'test', or 'prod', depending on the inventory file used.
 
 
 ### Prerequisites
@@ -30,7 +42,9 @@ A complete description of all variables (required or optional) that should be se
 
 * create `vault_pass.txt` in `secrets/` containing the vault password
 
-* link `/etc/ansible/hosts` to this repo's `hosts` file (optional; could point ansible.cfg to the inventory file instead, or use `-i` with ansible commands)
+* Fill out the appropriate entries in the `hosts/[lifecycle state]/inventory` file.
+
+* Fill out required variables for the groups, roles, and playbooks you are applying.
 
 ## Deployment
 
@@ -48,3 +62,4 @@ Run this to configure just the timeseries database on the `dev` environment:
 
 * Alex Page, <alex.page@rochester.edu>
 * Peter Dragos, <pdragos@u.rochester.edu>
+

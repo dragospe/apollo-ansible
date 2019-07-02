@@ -106,6 +106,7 @@
     # - systemd (optional, for enabling systemd support)
     # - pytest-catchlog
     executable: pip3
+    umask: '0022'
   # Those are (mostly) all listed in setup.py, but we seem to need to install
   # them manually.  (see https://github.com/pypa/pip/issues/4780)
   # Note: exact version numbers are used to work aroud

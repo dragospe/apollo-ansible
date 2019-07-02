@@ -1,6 +1,10 @@
 ---
 # tasks file for apollo_monitor
 
+- name: Setup dev environmnet
+  include_tasks: dev_setup.yml
+  when: lifecycle_state == 'dev'
+
 - name: Install grafana
   include_tasks: install_grafana.yml
 

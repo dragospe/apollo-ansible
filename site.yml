@@ -1,0 +1,22 @@
+---
+## This playbook deploys the entire application stack
+
+- hosts: all
+  roles:
+    - common
+  become: yes
+
+- hosts: apollo_monitor
+  roles:
+    - apollo_monitor
+  become: yes
+
+- hosts: apollo_ts
+  roles:
+    - apollo_ts
+  become: yes
+
+- hosts: apollo_scripts
+  roles:
+    - apollo_scripts
+  become: yes

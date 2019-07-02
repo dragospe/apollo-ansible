@@ -1,0 +1,17 @@
+- name: Add apollo_monitor.dev host entry for dev environment
+  lineinfile:
+    path: /etc/hosts
+    line: '127.0.0.1  apollo_monitor.dev '
+    state: present
+    insertafter: EOF
+  when: lifecycle_state == 'dev'
+
+- name: Add development CA
+  copy:
+    src: ../../../hosts/dev/files/cacert.pem
+    dest: /etc/pki/ca-trust/source/anchors
+    mode: 644
+
+- name: Update trust anchors
+  command: /bin/update-ca-trust
+  become: yes

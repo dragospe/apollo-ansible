@@ -17,7 +17,6 @@
 - name: Install TimescaleDB
   include_tasks: install_ts.yml
   when: ansible_os_family == 'RedHat'
-  become: yes
 
 - name: Create the timescaleDB database
   include_tasks: create_db.yml
