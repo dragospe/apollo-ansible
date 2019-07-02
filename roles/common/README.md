@@ -24,6 +24,26 @@ Add Users
 This role disables password access for the root account. Therefore, it is ~~highly advised~~ mandatory to setup an administrative account.
 All files matching the `tasks/user_accounts/*_account.yml` glob will be executed by this role. Use this to setup your accounts, permissions, configurations, SSH, etc.
  
+Example Playbook
+-------
+Run the play below with:
+
+`ansible-playbook -i /path/to/inventory --vault-password-file /path/to/password/file --ask-become-pass`
+
+
+`
+---
+# Configure a brand new system
+
+- hosts: my_host
+  roles:
+    - common
+  become: yes
+  become_user: some_sudo_user
+'
+
+Note that the `become_user` may not be "root" after the first time this playbook is run; the root account is disabled in this play.
+
 License
 -------
 TBD 

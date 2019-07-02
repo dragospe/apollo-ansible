@@ -1,6 +1,3 @@
-- name: Install S3 drivers
-  include_tasks: install_s3.yml
-
 - name: Copy ssh keys
   include_tasks: copy_keys.yml
 
@@ -28,15 +25,15 @@
 - name: compile geneactiv page parser
   command: make lib
   args:
-    chdir: /home/apollo/code/geneactiv/page_parser
-    creates: /home/apollo/code/geneactiv/page_parser/libgeneactivpage.so
+    chdir: /home/apollo/code/geneactiv/geneactiv/page_parser
+    creates: /home/apollo/code/geneactiv/geneactiv/page_parser/libgeneactivpage.so
   become: yes
   become_user: apollo
 
 - name: install geneactiv page parser
   command: make install
   args:
-    chdir: /home/apollo/code/geneactiv/page_parser
+    chdir: /home/apollo/code/geneactiv/geneactiv/page_parser
     creates: /usr/local/lib/libgeneactivpage.so
   become: yes
 
@@ -48,6 +45,7 @@
   pip:
     name: sqlalchemy
     executable: pip3
+    umask: "0022"
   become: yes
 # TODO: that should be done automatically as a prereq of apollo_db
 # ('install_requires ...' in setup.py)
@@ -120,6 +118,7 @@
 - name: pip install selenium
   pip:
     name: selenium
+    umask: "0022"
     executable: pip3
   become: yes
 
@@ -133,7 +132,7 @@
 
 - name: copy REDCap token
   copy:
-    src: "{{ 'redcap_secrets.py' if qol_mode == 'prod' else
+    src: "{{ 'redcap_secrets.py' if lifecycle_state == 'prod' else
              'redcap_secrets_test.py' }}"
     dest: /home/apollo/code/redcap_qol_hacks/redcap_secrets.py
     owner: apollo
@@ -144,7 +143,7 @@
 
 - name: copy QOL script settings file
   copy:
-    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if qol_mode == 'prod' else
+    content: "{{ 'PROJECT_NAME = \"APOLLO-AF\"' if lifecycle_state == 'prod' else
                  'PROJECT_NAME = \"APOLLO-AF (testing)\"' }}"
     dest: /home/apollo/code/redcap_qol_hacks/proj_settings.py
     owner: apollo
@@ -170,6 +169,15 @@
     state: present
   become: yes
 
+
+# TODO: because of the umask, some libraries for python are unaccessible (requests, urllib). I can't figure out when these are first installed, so this should be troubleshot.
+- name: Fix site-packages permissions
+  file:
+    state: directory
+    mode: '0755'
+    recurse: yes
+    path: /usr/local/lib/python3.6/site-packages
+
 - name: send surveys daily
   cron:
     name: daily QOL surveys
@@ -180,6 +188,7 @@
     disabled: no
   become: yes
   become_user: apollo
+
 - name: send surveys weekly
   cron:
     name: weekly QOL surveys

@@ -13,6 +13,7 @@
     chdir: "/home/apollo/code/{{repo_name}}"
     editable: yes
     executable: pip3
+    umask: "0022"
   register: result
   # This method only works in new-ish pip:
   changed_when: '"Found existing installation" not in result.stdout'

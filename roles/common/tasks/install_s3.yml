@@ -55,7 +55,6 @@
     chdir: /home/apollo/code/s3fs-fuse
     creates: /home/apollo/code/s3fs-fuse/src/s3fs
   become: yes
-  become_user: apollo
 
 - name: install s3fs
   command: make install
@@ -66,7 +65,7 @@
 
 - name: install S3 credentials
   copy:
-    src: /home/apollo/code/apollo_ansible/secrets/passwd-s3fs
+    src: passwd-s3fs
     dest: /etc/passwd-s3fs
     owner: root
     group: root
@@ -98,7 +97,6 @@
       #   gcc
       #   git
     state: present
-  become: yes
 
 - name: install s3ql prereqs (pip)
   pip:
@@ -108,7 +106,6 @@
     # - systemd (optional, for enabling systemd support)
     # - pytest-catchlog
     executable: pip3
-  become: yes
   # Those are (mostly) all listed in setup.py, but we seem to need to install
   # them manually.  (see https://github.com/pypa/pip/issues/4780)
   # Note: exact version numbers are used to work aroud
@@ -116,11 +113,9 @@
 
 - name: extract s3ql source
   unarchive:
-    src: /home/apollo/code/apollo_ansible/bin/s3ql-2.30.tar.bz2
+    src: s3ql-2.30.tar.bz2
     dest: /home/apollo/code
     creates: /home/apollo/code/s3ql-2.30/setup.py
-  become: yes
-  become_user: apollo
 
 - name: compile s3ql
   command: 'python3 setup.py build_ext --inplace'
@@ -128,7 +123,6 @@
     chdir: /home/apollo/code/s3ql-2.30
     creates: /home/apollo/code/s3ql-2.30/src/s3ql/deltadump.cpython-34m.so
   become: yes
-  become_user: apollo
   # Note: you can test it with `python3 -m pytest tests/`.
 
 - name: install s3ql
@@ -146,9 +140,7 @@
   file:
     path: /mnt/s3
     state: directory
-    owner: root
-    group: root
-    mode: 0775  # TODO
+    #mode: 0775  # TODO: I think the file permissions here need to be handled differently. I get an IO error on the second run of this play. See https://serverfault.com/questions/175630/s3fs-input-output-error
   become: yes
 
 - name: mount S3 bucket
