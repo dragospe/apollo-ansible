@@ -8,8 +8,31 @@
 - name: Install grafana
   include_tasks: install_grafana.yml
 
+### Offline configuration of grafana (i.e., editing files in /etc/). Further
+# configuration (changing password, setting up accounts, etc.) happens via API
+# after the server is started.
+
 - name: Configure grafana
   include_tasks: configure_grafana.yml
+
+- name: Start grafana
+  systemd:
+    name: grafana-server
+    state: started
+  become: yes
+
+- name: Change grafana admin password (ignoring if already changed).
+  uri: 
+      url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"  
+      method: put
+      url_username: 'admin'
+      url_password: 'admin'
+      body: 
+        password: '{{ apollo_monitor_grafana_admin_password }}' 
+      body_format: json
+      force_basic_auth: yes
+  ignore_errors: yes  
+
 
 - name: Set up user accounts
   include_tasks: user_accounts.yml

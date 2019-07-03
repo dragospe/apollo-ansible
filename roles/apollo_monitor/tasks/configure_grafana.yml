@@ -1,3 +1,4 @@
+---
 - name: Create /usr/share/grafana/tls
   file:
     path: /usr/share/grafana/tls
@@ -53,6 +54,13 @@
     - { section: server, option: cert_file, value: '/usr/share/grafana/tls/tls.crt'}
     - { section: server, option: cert_key, value: '/usr/share/grafana/tls/tls.key' }
   
+    ### [database] section ###
+    #- { section: database, option: type, value: postgres }
+    #- { section: database, option: host, value: '{{ apollo_monitor_postgresql_backend_host }}' }
+    #- { section: database, option: name, value: '{{ apollo_monitor_postgresql_backend_database_name }}' }    
+    #- { section: database, option: user, value: '{{ apollo_monitor_postgresql_backend_database_username }}' }    
+    #- { section: database, option: name, value: '{{ apollo_monitor_postgresql_backend_database_password }}' }    
+
     ### [security] section ###
     - { section: security, option: cookie_secure, value: true }
     - { section: security, option: strict_transport_security, value: true }
@@ -70,16 +78,5 @@
     offline: yes
     immediate: yes
 
-- name: Change grafana admin password (ignoring if already changed).
-  uri: 
-      url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"  
-      method: put
-      url_username: 'admin'
-      url_password: 'admin'
-      body: 
-        password: '{{ apollo_monitor_grafana_admin_password }}' 
-      body_format: json
-      force_basic_auth: yes
-  ignore_errors: yes  
 
 

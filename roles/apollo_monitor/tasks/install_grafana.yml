@@ -19,9 +19,8 @@
     state: present
   become: yes
 
-- name: Start and enable grafana
+- name: Auto start grafana on boot
   systemd:
     name: grafana-server
-    state: started
     enabled: yes
   become: yes

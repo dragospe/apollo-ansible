@@ -49,8 +49,10 @@ Global, user-defined variables are listed below. See the `template.yml` file des
 | apollo_monitor_grafana_admin_password | *Format*: A vaulted plaintext file containing the "admin" account password. | `defaults/main.yml	`|
 | apollo_monitor_domain | *Format*: FQDN of the grafana server | `../../hosts/[env]/group_vars/apollo_monitor/apollo_monitor.yml` | The public facing domain name used to access grafana from a browser
 | apollo_monitor_root_url | *Format*: URL| `../../hosts/[env]/group_vars/apollo_monitor/apollo_monitor.yml` | The full public facing url you use in browser, used for redirects and emails|. 
-
-
+| apollo_monitor_postgresql_backend_host | Hostname or IP | `../../hosts/[env]/group_vars/apollo_monitor/apollo_monitor_postgresql_backend_details.yml` | The host name for grafana to connect to for it's backend database. |
+| apollo_monitor_postgresql_backend_database_name | *Format*: String |   `../../hosts/[env]/group_vars/apollo_monitor/apollo_monitor_postgresql_backend_details.yml` | Name of the backend database to connect to |
+| apollo_monitor_postgresql_backend_database_username | *Format*: String |   `../../hosts/[env]/group_vars/apollo_monitor/apollo_monitor_postgresql_backend_details.yml` | Username of the database role grafana should connect as for it's backend. | 
+| apollo_monitor_postgresql_backend_database_password | *Format*: Vaulted string |   `../../hosts/[env]/group_vars/apollo_monitor/apollo_monitor_postgresql_backend_details.yml` | Vaulted password of the database role grafana should connect as for it's backend. |
 Security Considerations
 -----------
 **TODO**: 
@@ -63,11 +65,6 @@ As of this writing (2019-06-26), it appears that certain API calls must use Basi
 
 Reading through various bug reports, I have concluded that security is not a first-class concern of the grafana developers, although it is getting worked on. I am uncertain whether or data source passwords are being stored in plaintext.
 
-
-Role Variables
---------------
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
 
 License
 -------
