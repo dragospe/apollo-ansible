@@ -1,6 +1,6 @@
 - name: install EPEL (pre-requiste)
   package:
-      name: 
+      name:
         - epel-release
       state: present
   when: ansible_os_family == 'RedHat'
@@ -9,13 +9,12 @@
   yum_repository:
     name: pgpd
     description: PostgreSQL repo
-    baseurl: https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/   
+    baseurl: https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/
     file: external_repos
     gpgcheck: yes
     gpgkey: https://ftp.postgresql.org/pub/repos/yum/RPM-GPG-KEY-PGDG
-     
   when: ansible_os_family == 'RedHat'
- 
+
 - name: Prevent dependencies being resolved by base repo (CentOS)
   block:
     - name: Exclude postgres* in base
@@ -30,7 +29,7 @@
         path: /etc/yum.repos.d/CentOS-Base.repo
         section: updates
         option: exclude
-        value: 'postgres*' 
+        value: 'postgres*'
 
 - name: Install PostgreSQL 11 Server
   yum:
@@ -38,11 +37,6 @@
     state: present
 
 - name: Install psycopg2
-  yum: 
+  yum:
     name: python2-psycopg2
     state: present
-  
-
-
-
-

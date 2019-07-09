@@ -10,7 +10,7 @@
     sslverify: yes
     sslcacert: /etc/pki/tls/certs/ca-bundle.crt
     metadata_expire: 300
-   
+
 - name: Install TimescaleDB-11
   yum:
     name: timescaledb-postgresql-11
@@ -26,7 +26,7 @@
 - name: Configure postgres for timescaledb
   command: "timescaledb-tune -yes"
   when:  found_files.matched == 0
-  environment: 
+  environment:
     PATH: '{{ apollo_ts_postgresql_bin_path }}:{{ ansible_env.PATH }}'
   become: yes
   become_user: "{{ apollo_ts_postgresql_user }}"

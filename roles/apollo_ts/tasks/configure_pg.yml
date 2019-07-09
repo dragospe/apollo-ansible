@@ -8,7 +8,7 @@
     login_password: '{{ apollo_ts_postgresql_user_password }}'
 
 - name: Autostart postgres on boot
-  systemd: 
+  systemd:
     name: postgresql-11
     enabled: yes
 
@@ -26,8 +26,8 @@
   become: yes
 
 - name: Copy over SSL certificate
-  copy: 
-    src: '[{{ lifecycle_state }}]_apollo_ts_server.crt'  
+  copy:
+    src: '[{{ lifecycle_state }}]_apollo_ts_server.crt'
     dest: '~/ssl/[{{ lifecycle_state }}]_apollo_ts_server.crt'
     mode: 0400
     owner: '{{ apollo_ts_postgresql_user }}'
@@ -36,14 +36,14 @@
   become: yes
 
 - name: Copy over SSL key
-  copy: 
-    src: '[{{ lifecycle_state }}]_apollo_ts_server.key'  
+  copy:
+    src: '[{{ lifecycle_state }}]_apollo_ts_server.key'
     dest: '~/ssl/[{{ lifecycle_state }}]_apollo_ts_server.key'
     mode: 0400
     owner: '{{ apollo_ts_postgresql_user }}'
     group: '{{ apollo_ts_postgresql_user }}'
   become_user: '{{ apollo_ts_postgresql_user }}'
-  become: yes 
+  become: yes
 
 - name: Configure postgresql.conf
   template:
@@ -84,7 +84,7 @@
       with_items:
         - { option: enabled, value: true}
         - { option: filter, value: postgresql}
-        - { option: logpath, value: '{{apollo_ts_postgresql_config_path}}/log/*'}
+        - { option: logpath, value: '{{ apollo_ts_postgresql_config_path }}/log/*'}
         - { option: action, value: 'iptables[name=postgresql, port=postgresql, protocol=tcp]'}
         - { option: maxretry, value: 5}
 
@@ -93,7 +93,7 @@
         path: /etc/fail2ban/filter.d/postgresql.conf
         create: yes
         line: '### Ansible Managed: Manually entered contents may be overwritten. ###'
-        
+
     - name: Set postgresql.conf filter
       ini_file:
         path: /etc/fail2ban/filter.d/postgresql.conf
@@ -105,7 +105,6 @@
       selinux_permissive:
         name: fail2ban_t
         permissive: yes
-        
 
     - name: 'Set fail2ban client to permissive [TODO: figure out appropriate policy]'
       selinux_permissive:

@@ -13,7 +13,7 @@
   register: pgdata_dir_version
 
 - name: Ensure PostgreSQL database is initialized.
-  command: "{{ apollo_ts_postgresql_bin_path}}/initdb -D {{ apollo_ts_postgresql_data_dir }}"
+  command: "{{ apollo_ts_postgresql_bin_path }}/initdb -D {{ apollo_ts_postgresql_data_dir }}"
   when: not pgdata_dir_version.stat.exists
   become: true
   become_user: "{{ apollo_ts_postgresql_user }}"

@@ -1,11 +1,11 @@
 ---
 # tasks file for pg_database
 - name: Set facts
-  include_tasks: variables.yml 
+  include_tasks: variables.yml
 
 - name: Install PostgreSQL
   include_tasks: install_pg.yml
-  
+
 - name: Initialize the database
   include_tasks: initialize_pg.yml
 
@@ -25,4 +25,3 @@
   include_tasks: '{{ item }}'
   with_fileglob:
     - "user_accounts/*.yml"
- 

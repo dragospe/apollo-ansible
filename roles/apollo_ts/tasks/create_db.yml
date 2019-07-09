@@ -4,7 +4,7 @@
     state: started
 
 - name: Reload postgresql if needed
-  meta: flush_handlers 
+  meta: flush_handlers
 
 - name: Create a database
   postgresql_db:
@@ -27,5 +27,3 @@
     login_password: "{{ apollo_ts_postgresql_user_password }}"
   become_user: "{{ apollo_ts_postgresql_user }}"
   become: yes
-    
- 

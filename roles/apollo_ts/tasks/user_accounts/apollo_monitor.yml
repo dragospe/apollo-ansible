@@ -5,7 +5,6 @@
     password: "{{ apollo_ts_apollo_monitor_user_password }}"
     login_user: "{{ apollo_ts_postgresql_user }}"
     login_password: "{{ apollo_ts_postgresql_user_password }}"
-    
 
 - name: Revoke all privleges for apollo_monitor
   postgresql_privs:
@@ -26,8 +25,6 @@
     objs: public
     login_user: "{{ apollo_ts_postgresql_user }}"
     login_password: "{{ apollo_ts_postgresql_user_password }}"
-    
-    
 
 - name: Set default apollo_monitor user read permissions on the timeseries database (public schema)
   postgresql_privs:
@@ -38,7 +35,6 @@
     objs: TABLES
     login_user: "{{ apollo_ts_postgresql_user }}"
     login_password: "{{ apollo_ts_postgresql_user_password }}"
-    
 
 - name: Set actual read permission for apollo_monitor
   postgresql_privs:
@@ -49,4 +45,3 @@
     state: present
     login_user: "{{ apollo_ts_postgresql_user }}"
     login_password: "{{ apollo_ts_postgresql_user_password }}"
-    
