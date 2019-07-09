@@ -9,8 +9,5 @@
   copy:
     src: ../../../hosts/test/files/cacert.pem
     dest: /etc/pki/ca-trust/source/anchors
-    mode: 644
-
-- name: Update trust anchors
-  command: /bin/update-ca-trust
-  become: yes
+    mode: 0644
+  notify: update trust anchors

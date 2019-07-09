@@ -10,13 +10,13 @@
 - name: Copy over TLS files
   block:
     - name: Copy key
-      copy: 
+      copy:
         src: '[{{ lifecycle_state }}]_apollo_monitor_server.key'
         dest: '/usr/share/grafana/tls/tls.key'
         mode: '0400'
         owner: grafana
-        group: grafana 
-    
+        group: grafana
+
     - name: Copy certificate
       copy:
         src: '[{{ lifecycle_state }}]_apollo_monitor_server.crt'
@@ -45,22 +45,19 @@
     option: '{{ item.option }}'
     value: '{{ item.value }}'
   with_items:
-    
     ### [server] section ###
     - { section: server, option: protocol, value: https}
     - { section: server, option: domain, value: '{{ apollo_monitor_domain }}'}
     - { section: server, option: enforce_domain, value: true}
-    - { section: server, option: root_url, value: '{{ apollo_monitor_root_url}}' }
+    - { section: server, option: root_url, value: '{{ apollo_monitor_root_url }}' }
     - { section: server, option: cert_file, value: '/usr/share/grafana/tls/tls.crt'}
     - { section: server, option: cert_key, value: '/usr/share/grafana/tls/tls.key' }
-  
     ### [database] section ###
     - { section: database, option: type, value: postgres }
     - { section: database, option: host, value: '{{ apollo_monitor_postgresql_backend_host }}' }
-    - { section: database, option: name, value: '{{ apollo_monitor_postgresql_backend_database_name }}' }    
-    - { section: database, option: user, value: '{{ apollo_monitor_postgresql_backend_database_username }}' }    
-    - { section: database, option: password, value: '{{ apollo_monitor_postgresql_backend_database_password }}' }    
-
+    - { section: database, option: name, value: '{{ apollo_monitor_postgresql_backend_database_name }}' }
+    - { section: database, option: user, value: '{{ apollo_monitor_postgresql_backend_database_username }}' }
+    - { section: database, option: password, value: '{{ apollo_monitor_postgresql_backend_database_password }}' }
     ### [security] section ###
     - { section: security, option: cookie_secure, value: true }
     - { section: security, option: strict_transport_security, value: true }
@@ -69,7 +66,7 @@
     - { section: security, option: x_content_type_options, value: true }
     - { section: security, option: x_xss_protection, value: true }
   notify: restart grafana
-  
+
 - name: Add firewalld rule
   firewalld:
     port: 3000/tcp

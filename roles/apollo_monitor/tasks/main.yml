@@ -26,31 +26,23 @@
   become: yes
 
 - name: Change grafana admin password (ignoring if already changed).
-  uri: 
-      url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"  
+  uri:
+      url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"
       method: put
       url_username: 'admin'
       url_password: 'admin'
-      body: 
-        password: '{{ apollo_monitor_grafana_admin_password }}' 
+      body:
+        password: '{{ apollo_monitor_grafana_admin_password }}'
       body_format: json
       force_basic_auth: yes
-  ignore_errors: yes  
+  ignore_errors: yes
 
 
 - name: Set up user accounts
   include_tasks: user_accounts.yml
-    
+
 - name: Provision dashboards
   include_tasks: provision_dashboards.yml
 
 - name: Provision datasources
   include_tasks: provision_datasources.yml
-   
-   
-   
-   
-   
-   
-   
-   

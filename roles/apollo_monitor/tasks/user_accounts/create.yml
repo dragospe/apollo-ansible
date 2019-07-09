@@ -1,11 +1,11 @@
-- name: Check if '{{ apollo_monitor_grafana_common_name}}'s account exists
-  uri: 
+- name: Check if '{{ apollo_monitor_grafana_common_name }}'s account exists
+  uri:
     url: '{{ apollo_monitor_root_url }}/api/users/lookup?loginOrEmail={{ apollo_monitor_grafana_email }}'
     url_username: 'admin'
     url_password: '{{ apollo_monitor_grafana_admin_password }}'
     method: GET
     force_basic_auth: yes
-  register: user_found  
+  register: user_found
   ignore_errors: yes
 
 - name: Create '{{ apollo_monitor_grafana_common_name }}'s account
@@ -14,7 +14,7 @@
     url_username: 'admin'
     url_password: '{{ apollo_monitor_grafana_admin_password }}'
     method: POST
-    body: 
+    body:
       name: '{{ apollo_monitor_grafana_common_name }}'
       email: '{{ apollo_monitor_grafana_email }}'
       login: '{{ apollo_monitor_grafana_username }}'
@@ -24,11 +24,13 @@
   when:  (user_found.json.message is undefined or user_found.json.message == "User not found") and user_found.status !=  200
   register: user_created
 
-- set_fact: 
+- name: Set account_id if user was found.
+  set_fact:
     account_id: "{{ user_found.json.id }}"
   when: user_found.status == 200
 
-- set_fact:
+- name: Set account_id if user was created.
+  set_fact:
      account_id: '{{ user_created.json.id }}'
   when: user_created.json.id is defined
 
@@ -38,7 +40,7 @@
     url_username: 'admin'
     url_password: '{{ apollo_monitor_grafana_admin_password }}'
     method: PUT
-    body: 
+    body:
       isGrafanaAdmin: '{{ apollo_monitor_grafana_user_isGrafanaAdmin | default("False") }}'
     body_format: json
     force_basic_auth: yes

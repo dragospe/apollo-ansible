@@ -4,20 +4,20 @@
     owner: grafana
     group: grafana
     mode: 0700
-    state: directory 
+    state: directory
 
 - name: Copy over provisioned dashboard files
-  copy: 
+  copy:
     src: '{{ item }}'
     dest: /var/lib/grafana/dashboards/
     mode: 0600
     owner: grafana
     group: grafana
-  with_fileglob: 
+  with_fileglob:
     - 'dashboards/*.json'
 
 - name: Copy over dashboard provider file
-  copy: 
+  copy:
     src: '{{ item }}'
     dest: /etc/grafana/provisioning/dashboards/
     mode: 0600
