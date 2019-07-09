@@ -5,6 +5,10 @@
   include_tasks: dev_setup.yml
   when: lifecycle_state == 'dev'
 
+- name: Setup test environment
+  include_tasks: test_setup.yml
+  when: lifecycle_state == 'test'
+
 - name: Install grafana
   include_tasks: install_grafana.yml
 

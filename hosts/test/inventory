@@ -19,6 +19,7 @@
 [apollo_ts]
 
 [apollo_monitor]
+ec2 ansible_host=172.17.176.77
 
 [apollo_scripts]
 

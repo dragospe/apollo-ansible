@@ -1,13 +1,13 @@
-- name: Add apollo_monitor.dev host entry for dev environment
+- name: Add apollo_monitor.test host entry for test environment
   lineinfile:
     path: /etc/hosts
-    line: '127.0.0.1  apollo_monitor.dev '
+    line: '127.0.0.1  apollo_monitor.test '
     state: present
     insertafter: EOF
 
 - name: Add development CA
   copy:
-    src: ../../../hosts/dev/files/cacert.pem
+    src: ../../../hosts/test/files/cacert.pem
     dest: /etc/pki/ca-trust/source/anchors
     mode: 644
 
