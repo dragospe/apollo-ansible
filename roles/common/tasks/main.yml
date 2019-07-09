@@ -1,6 +1,5 @@
 ---
 # tasks file for common
-
 - name: Common software setup
   include_tasks: software_setup.yml
 
@@ -18,11 +17,11 @@
 - name: set hostname
   hostname:
     name: "{{ inventory_hostname }}"
-    
+
 - name: set timezone
   timezone:
     name: America/New_York
-      
+
   # - name: install ddclient
   #   # TODO: configure+start it
   #   package:

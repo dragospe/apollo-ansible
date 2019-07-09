@@ -48,7 +48,6 @@
     section: sshd
     option: enabled
     value: 'true'
-      
 
 
 - name: enable fail2ban

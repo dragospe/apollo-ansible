@@ -6,4 +6,4 @@
 - name: Disable root account
   user:
     name: root
-    password: '*'     
+    password: '*'

@@ -27,7 +27,7 @@
   become: yes
 
 - name: Restrict authorized keys for apollo
-  file: 
+  file:
     path: /home/apollo/.ssh/authorized_keys
     owner: root
     group: root

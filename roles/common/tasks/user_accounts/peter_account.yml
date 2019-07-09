@@ -29,15 +29,18 @@
 
 - name: set up git config for Peter
   block:
-    - git_config:
+    - name: Set git editor
+      git_config:
         name: core.editor
         value: vi
         scope: global
-    - git_config:
+    - name: Set git email
+      git_config:
         name: user.email
         value: pdragos@u.rochester.edu
         scope: global
-    - git_config:
+    - name: Set git username
+      git_config:
         name: user.name
         value: Peter Dragos
         scope: global

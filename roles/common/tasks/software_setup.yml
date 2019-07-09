@@ -27,7 +27,7 @@
 
 - name: ensure /usr/local/bin is in PATH (for sudo)
   copy:
-    content: "Defaults	secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n"
+    content: "Defaults  secure_path=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"\n"
     # If you mess that up, see:
     #   https://askubuntu.com/questions/73864/how-to-modify-an-invalid-etc-sudoers-file
     #   https://askubuntu.com/questions/799669/etc-sudoers-file-corrupted-and-i-cant-run-pkexec-visudo-over-ssh

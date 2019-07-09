@@ -26,15 +26,18 @@
 
 - name: set up git config for Alex
   block:
-    - git_config:
+    - name: Set git editor
+      git_config:
         name: core.editor
         value: emacs
         scope: global
-    - git_config:
+    - name: set git email
+      git_config:
         name: user.email
         value: alex_page@urmc.rochester.edu
         scope: global
-    - git_config:
+    - name: Set git username
+      git_config:
         name: user.name
         value: Alex Page
         scope: global
