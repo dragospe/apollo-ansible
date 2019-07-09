@@ -1,16 +1,17 @@
 
-- name: "download {{repo_name}} code"
+- name: "download {{ repo_name }} code"
   git:
-    repo: "{{repo_url}}"
-    dest: "/home/apollo/code/{{repo_name}}"
-    key_file: "{{key_file | default(omit)}}"
+    repo: "{{ repo_url }}"
+    dest: "/home/apollo/code/{{ repo_name }}"
+    key_file: "{{ key_file | default(omit) }}"
+    version: "HEAD"
   become: yes
   become_user: apollo
 
-- name: "pip3 install {{repo_name}}"
+- name: "pip3 install {{ repo_name }}"
   pip:
     name: .
-    chdir: "/home/apollo/code/{{repo_name}}"
+    chdir: "/home/apollo/code/{{ repo_name }}"
     editable: yes
     executable: pip3
     umask: "0022"

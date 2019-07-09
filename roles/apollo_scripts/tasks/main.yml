@@ -127,6 +127,7 @@
     repo: git@bitbucket.org:atpage/redcap_qol_hacks.git
     dest: /home/apollo/code/redcap_qol_hacks
     key_file: /home/apollo/.ssh/id_rsa
+    version: "HEAD"
   become: yes
   become_user: apollo
 
