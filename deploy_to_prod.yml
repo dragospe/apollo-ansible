@@ -1,0 +1,375 @@
+- name: Setup all servers with the `common` role
+  tags: common
+  hosts: 
+    - apolloweb
+    - apollosql
+  roles:
+    - common
+  become: yes
+
+- name: Setup apollosql with `geerlingguy.postgresql` role
+  tags: postgresql
+  hosts:
+    - apollosql
+  roles:
+    - 'geerlingguy.postgresql'
+  vars:
+    postgresql_databases:
+        - name: '{{ apollo_site_database_name }}'
+        - name: '{{ apollo_monitor_grafana_backend_database_name }}'
+    postgresql_users:
+        - name: '{{ apollo_site_database_user }}'
+          password: '{{ apollo_site_database_password }}'
+        - name: '{{ apollo_monitor_grafana_backend_database_user }}'
+          password: '{{ apollo_monitor_grafana_backend_database_password }}'
+    postgresql_global_config_options:
+        - option: listen_addresses
+          value: '*'
+    postgresql_hba_entries:
+        - type: local
+          database: all
+          user: postgres
+          auth_method: peer
+        - type: hostssl 
+          database: '{{ apollo_site_database_name }}' 
+          user: '{{ apollo_site_database_user }}'
+          address: '{{ apollo_site_database_connection_cidr_ip }}'
+          auth_method: md5
+        - type: local
+          database: '{{ apollo_site_database_name }}'
+          user: '{{ apollo_monitor_grafana_backend_database_user }}'
+          auth_method: peer
+        - type: local
+          database: '{{ apollo_monitor_grafana_backend_database_name }}'
+          user: '{{ apollo_monitor_grafana_backend_database_user }}'
+          auth_method: peer
+  become: yes
+
+- name: Finish configuration of postgres
+  hosts: apollosql
+  tags: apollo_pg
+  roles:
+    - apollo_pg
+  become: yes
+
+
+- name: Setup apolloweb with nginx role
+  hosts: apolloweb
+  tags: nginx
+  roles: 
+    - 'nginxinc.nginx'
+  become: yes
+  vars:
+    nginx_http_template_enable: true
+    nginx_http_template:
+      default:
+        template_file: http/default.conf.j2
+        conf_file_name: default.conf
+        conf_file_location: /etc/nginx/conf.d/
+        servers:
+          http_redirect:
+            server_name: _
+            listen:
+              listen_80:
+                ip: 0.0.0.0
+                port: 80
+            returns: 
+                https_redirect:
+                    location: /
+                    code: 301 
+                    value: https://$host$request_uri
+          apollo_api:
+            server_name: '{{ apollo_api_nginx_server_name }}'
+            listen:
+              listen_all:
+                ip: 0.0.0.0
+                port: 443 ssl
+                ssl: true
+                opts:
+                  - default_server
+            autoindex: false
+            reverse_proxy:
+              locations:
+                homepage:
+                  location: /
+                  proxy_set_header:
+                      header_x_real_ip:
+                        name: X-Real-IP
+                        value: $remote_addr
+                      header_x_forwarded_for:
+                        name: X-Forwarded-For
+                        value: $remote_addr
+                      header_host:
+                        name: Host
+                        value: $host
+                  proxy_pass: http://127.0.0.1:8000
+                api_endpoints:
+                  location: /api_client/garmin/
+                  proxy_set_header:
+                    header_x_real_ip:
+                      name: X-Real-IP
+                      value: $remote_addr
+                    header_x_forwarded_for:
+                      name: X-Forwarded-For
+                      value: $remote_addr
+                    header_host:
+                      name: Host
+                      value: $host
+                  proxy_pass: http://127.0.0.1:8000
+                  allows: #Given from garmin
+                    - 98.100.124.0/24
+                    - 98.100.125.0/24
+                    - 204.77.162.0/24
+                    - 204.77.163.0/24
+                  denies:
+                    - all
+            include_files:
+                - /etc/nginx/conf.d/auth.conf
+
+- name: Setup apollosql with nginx
+  hosts: apollosql
+  tags: nginx
+  roles:
+    - nginxinc.nginx
+  become: yes
+  vars:
+    nginx_http_template_enable: true
+    nginx_http_template:
+      default:
+        template_file: http/default.conf.j2
+        conf_file_name: default.conf
+        conf_file_location: /etc/nginx/conf.d/
+        servers:
+          http_redirect:
+            server_name: _
+            listen:
+              listen_80:
+                ip: 0.0.0.0
+                port: 80
+            returns: 
+                https_redirect:
+                    location: /
+                    code: 301 
+                    value: https://$host$request_uri
+          apollo_docs:
+            server_name: '{{ apollo_docs_nginx_server_name }}'
+            root: /usr/share/nginx/html/apollo_docs
+            listen:
+              listen_all:
+                ip: 0.0.0.0
+                port: 443 ssl
+                ssl: true
+            include_files: 
+              - '/etc/nginx/conf.d/docs.conf'
+          apollo_monitor:
+            server_name: '{{ apollo_monitor_nginx_server_name }}'
+            listen:
+              listen_all:
+                ip: 0.0.0.0
+                port: 443 ssl
+                ssl: true
+            reverse_proxy:
+              locations:
+                homepage:
+                  location: /
+                  proxy_set_header:
+                    header_x_real_ip:
+                      name: X-Real-IP
+                      value: $remote_addr
+                    header_x_forwarded_for:
+                      name: X-Forwarded-For
+                      value: $remote_addr
+                    header_host:
+                      name: Host
+                      value: $host
+                  proxy_pass: http://unix:/grafana_socket/grafana.socket:/
+            include_files: 
+              - /etc/nginx/conf.d/dash.conf
+
+# TODO: Remove this
+- hosts: apolloweb
+  tasks: 
+    - name: Hacky SSL work around for apollo-web 
+      block:
+        - name: ensure cert directory exists
+          file:
+            path: /etc/ssl/certs/auth.apollo-af.org
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy cert
+          copy:
+            src: auth_cert
+            dest: /etc/ssl/certs/auth.apollo-af.org/fullchain.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy key
+          copy:
+            src: auth_key
+            dest: /etc/ssl/certs/auth.apollo-af.org/privkey.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy auth.conf
+          copy:
+            src: auth.conf
+            dest: /etc/nginx/conf.d/auth.conf
+            owner: root
+            group: root
+            mode: 0644
+            seuser: system_u
+            serole: object_r
+            setype: httpd_config_t
+        - name: restart nginx
+          systemd:
+            name: nginx
+            state: restarted
+  become: yes
+            
+# TODO: Remove this
+- hosts: apollosql
+  tasks: 
+    - name: Hacky SSL work around for apollo-sql 
+      block:
+        - name: ensure cert directory exists for docs
+          file:
+            path: /etc/ssl/certs/docs.apollo-af.org
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: ensure cert directory exists for dash
+          file:
+            path: /etc/ssl/certs/dash.apollo-af.org
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy cert for docs
+          copy:
+            src: docs_cert
+            dest: /etc/ssl/certs/docs.apollo-af.org/fullchain.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy key for docs
+          copy:
+            src: docs_key
+            dest: /etc/ssl/certs/docs.apollo-af.org/privkey.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy docs.conf
+          copy:
+            src: docs.conf
+            dest: /etc/nginx/conf.d/docs.conf
+            owner: root
+            group: root
+            mode: 0644
+            seuser: system_u
+            serole: object_r
+            setype: httpd_config_t
+        - name: copy cert for dash
+          copy:
+            src: dash_cert
+            dest: /etc/ssl/certs/dash.apollo-af.org/fullchain.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy key for dash
+          copy:
+            src: dash_key
+            dest: /etc/ssl/certs/dash.apollo-af.org/privkey.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy dash.conf
+          copy:
+            src: dash.conf
+            dest: /etc/nginx/conf.d/dash.conf
+            owner: root
+            group: root
+            mode: 0644
+            seuser: system_u
+            serole: object_r
+            setype: httpd_config_t
+        - name: restart nginx
+          systemd: 
+            name: nginx
+            state: restarted
+  become: yes
+
+
+- hosts: apolloweb, apollosql
+  tasks:
+    - name: open port 80
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+        immediate: yes
+    - name: open port 443
+      firewalld:
+        service: https
+        permanent: yes
+        state: enabled
+        immediate: yes
+  become: yes
+
+- name: Apply apollo_api role
+  hosts: apolloweb
+  tags: 'apollo_api'
+  roles: 
+    - 'apollo_api'
+  become: yes
+
+- name: Apply apollo_monitor role
+  hosts: apollosql
+  tags: apollo_monitor
+  roles:  
+    - 'apollo_monitor'
+  vars:
+    apollo_monitor_domain: dash.apollo-af.org
+    apollo_monitor_root_url: https://dash.apollo-af.org/
+    apollo_monitor_postgresql_backend_host: /run/postgresql/
+    apollo_monitor_postgresql_backend_database_name: grafana
+    apollo_monitor_postgresql_backend_database_username: grafana
+    apollo_monitor_postgresql_backend_database_password: password
+  become: yes 
+  
+- name: Apply apollo_docs role
+  tags: apollo_docs
+  hosts: apollosql
+  roles:
+    - apollo_docs
+  become: yes
+ 

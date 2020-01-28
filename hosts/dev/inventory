@@ -23,5 +23,7 @@ apollo_ts-dev ansible_host=192.168.122.171 ansible_user=peter
 apollo_monitor-dev ansible_host=192.168.122.16 ansible_user=peter
 
 [apollo_scripts]
-apollo_scripts-dev ansible_host=192.168.122.185 ansible_user=peter
+apollo_scripts-dev ansible_host=192.168.122.184 ansible_user=peter
 
+[apollotest]
+apollo_test ansible_host=apollotest.ddns.net ansible_user=centos

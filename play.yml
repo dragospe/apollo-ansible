@@ -1,8 +1,5 @@
-- name: Configure ec2 with the 'common' and 'apollo_monitor' roles
-  hosts: ec2
+- name: Configure apollo_scripts with the 'common' and 'apollo_scripts' roles
+  hosts: apollotest 
   roles: 
-    #- 'common'
-    - 'apollo_monitor'
-  vars:
-    - ansible_user: centos
+    - common
   become: yes

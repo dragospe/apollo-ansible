@@ -1,6 +1,6 @@
 - name: Check if '{{ apollo_monitor_grafana_common_name }}'s account exists
   uri:
-    url: '{{ apollo_monitor_root_url }}/api/users/lookup?loginOrEmail={{ apollo_monitor_grafana_email }}'
+    url: '{{ apollo_monitor_root_url }}api/users/lookup?loginOrEmail={{ apollo_monitor_grafana_email }}'
     url_username: 'admin'
     url_password: '{{ apollo_monitor_grafana_admin_password }}'
     method: GET
@@ -10,7 +10,7 @@
 
 - name: Create '{{ apollo_monitor_grafana_common_name }}'s account
   uri:
-    url: '{{ apollo_monitor_root_url }}/api/admin/users'
+    url: '{{ apollo_monitor_root_url}}api/admin/users'
     url_username: 'admin'
     url_password: '{{ apollo_monitor_grafana_admin_password }}'
     method: POST
@@ -34,9 +34,9 @@
      account_id: '{{ user_created.json.id }}'
   when: user_created.json.id is defined
 
-- name: Set '{{ apollo_monitor_grafana_common_name }}'s permissions
+- name: Set account permissions
   uri:
-    url: '{{ apollo_monitor_root_url }}/api/admin/users/{{ account_id }}/permissions'
+    url: '{{ apollo_monitor_root_url}}api/admin/users/{{ account_id }}/permissions'
     url_username: 'admin'
     url_password: '{{ apollo_monitor_grafana_admin_password }}'
     method: PUT

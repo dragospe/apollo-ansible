@@ -1,0 +1,4 @@
+---
+# tasks file for apollo_docs
+- name: Setup apollo_docs
+  include_tasks: apollo_docs_setup.yml

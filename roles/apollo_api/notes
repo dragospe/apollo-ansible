@@ -1,0 +1,27 @@
+Flow:
+
+Install nginx
+  * use official ansible role
+    * Set up nginx conf file
+
+Configure system for nginx
+  * Get SSL keys working
+  * open up required port(s)
+  * any additional hardening (f2b?)
+
+Download apollo_api code from gitup
+
+Install the requirements.txt file via pip (gunicorn, sqlalchemy, requests, sanction, etc)
+
+Install the apollo_api project
+
+initialize database (if not already initialized)
+  * Perhaps do database initialization as a separate play/role?
+  
+Launch project
+  * start nginx
+  * start gunicorn
+
+Run tests
+
+

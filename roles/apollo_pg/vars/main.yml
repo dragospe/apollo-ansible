@@ -1,6 +1,0 @@
----
-# vars file for apollo_pg
-login_host: apollotestdb.cya9db53pp70.us-east-1.rds.amazonaws.com
-    login_user: apollodevdb
-    login_password: "{{ lookup('file', 'rds_password.txt') }}"
-    ssl_mode: require  # or verify-ca / verify-full

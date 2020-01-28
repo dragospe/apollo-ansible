@@ -1,0 +1,38 @@
+- name: copy bitbucket private key
+  copy:
+    src: ansible_bitbucket_apollo_docs_key
+    dest: /home/apollo/.ssh/id_rsa
+    owner: apollo
+    group: apollo
+    mode: 0600
+
+- name: Add bitbucket to known hosts
+  known_hosts:
+    name: bitbucket.org
+    key: bitbucket.org,18.205.93.1 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+  become_user: apollo
+
+- name: pull apollo_docs from bitbucket
+  git:
+    dest: "/home/apollo/repo/apollo_docs"
+    repo: ssh://git@bitbucket.org/pdragos1/apollo_docs.git
+    version: HEAD
+  become_user: apollo 
+
+- name: Ensure document root exists
+  file: 
+    path: /usr/share/nginx/html/apollo_docs
+    owner: nginx
+    group: nginx
+    state: directory
+
+- name: Copy site to document root
+  copy:
+    src: /home/apollo/repo/apollo_docs/site/
+    dest: /usr/share/nginx/html/apollo_docs
+    owner: nginx
+    group: nginx
+    seuser: system_u
+    serole: object_r
+    setype: httpd_sys_content_t
+    remote_src: yes

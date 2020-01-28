@@ -1,0 +1,17 @@
+[Unit]
+Description=Apollo-AF Web Application
+After=network.target
+Wants=nginx.service
+
+[Service]
+WorkingDirectory=/usr/lib/apollo_site/
+ExecStart=/usr/lib/apollo_site/venv/bin/gunicorn --error-logfile /var/log/apollo_site/gunicorn.errorlog --access-logfile /var/log/apollo_site/gunicorn.accesslog --pid /var/log/apollo_flask/gunicorn.pid -p 8000 wsgi:app
+ExecStop=/bin/kill -s TERM $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+User=apollo
+Group=apollo
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target  

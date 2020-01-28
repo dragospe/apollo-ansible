@@ -1,0 +1,14 @@
+---
+# tasks file for apollo_api
+
+- name: Setup apollo_flask
+  include_tasks: apollo_flask_setup.yml
+ 
+- name: Setup systemd services
+  include_tasks: systemd_service_setup.yml
+
+#- name: Run tests
+#  include_tasks: test.yml
+ 
+#- name: Mark as deployable.
+#  include_tasks: deploy.yml

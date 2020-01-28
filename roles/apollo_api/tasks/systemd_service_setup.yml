@@ -1,0 +1,12 @@
+- name: Copy the systemd service
+  copy:
+    src: apollo_flask.service
+    dest: /etc/systemd/system
+
+- name: Start and enable apollo_flask.service
+  systemd: 
+    name: apollo_flask
+    enabled: yes
+    state: started
+    daemon-reload: yes
+    

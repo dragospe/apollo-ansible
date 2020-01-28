@@ -1,0 +1,75 @@
+- name: copy bitbucket private key
+  copy:
+    src: ansible_bitbucket_apollo_flask_key
+    dest: /home/apollo/.ssh/id_rsa
+    owner: apollo
+    group: apollo
+    mode: 0600
+
+- name: Add bitbucket to known hosts
+  known_hosts:
+    name: bitbucket.org
+    key: bitbucket.org,18.205.93.1 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+  become_user: apollo
+
+- name: Ensure the application directory exists
+  file:
+   path: /usr/lib/apollo_site
+   state: directory
+   mode: '0700'
+   owner: apollo
+   group: apollo
+
+- name: Ensure the logging directory exists
+  file:
+    path: /var/log/apollo_site
+    state: directory
+    mode: '0700'
+    owner: apollo
+    group: apollo
+
+- name: pull apollo_flask from bitbucket
+  git:
+    dest: "/usr/lib/apollo_site"
+    repo: ssh://git@bitbucket.org/pdragos1/apollo_flask.git
+    version: HEAD
+  become_user: apollo 
+
+- name: Install virtualenv
+  yum:
+    name: python-virtualenv
+    state: present
+
+- name: pip3 install apollo_flask
+  pip:
+    name: .
+    chdir: "/usr/lib/apollo_site"
+    umask: "0022"
+    virtualenv: /usr/lib/apollo_site/venv
+    virtualenv_command: '/usr/bin/virtualenv -p python3'
+  become_user: apollo
+
+- name: Ensure instance directory exists
+  file:
+    path: /usr/lib/apollo_site/instance
+    state: directory
+    owner: apollo
+    group: apollo
+    mode: 0700
+
+- name: Copy garmin api keys
+  copy:
+    src: instance_config.py
+    dest: /usr/lib/apollo_site/instance/config.py
+    owner: apollo
+    group: apollo
+    mode: 0600
+
+- name: Set database configuration
+  blockinfile:
+    path: /usr/lib/apollo_site/instance/config.py
+    block: |
+      DATABASE_URI = '{{ apollo_site_database_uri }}'
+      DATABASE_NAME = '{{ apollo_site_database_name }}'
+      DEFAULT_DATABASE_URI = '{{ apollo_site_default_database_uri | default("") }}'
+      

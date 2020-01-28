@@ -3,3 +3,49 @@
 # See the main README file for explainations of these variables.
 
 lifecycle_state: prod
+
+### Apollo_site database configuration ###
+# Name of the database the flask app will use to store data
+apollo_site_database_name: apollo_site
+# postgres user that SQLalchemy will connect as
+apollo_site_database_user: apollo
+# postgres password
+apollo_site_database_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          36643264643431346165613138326261356335326265353337363762663836653566336135303366
+          3433653666323766653861303062396131333430373132310a333063343631633161366334336435
+          65366436353532623434613562623834376566396662616262313430653631336532363036326337
+          3462616437316136320a333764643130316464393437656361303565643865343765303565656237
+          63396466313065663838363066356466666363656636306366666130663566646431376466373734
+          3734346262366164616664636138653631653836326339323437
+# IP that should be whitelisted for apollo_site in pg_hba.conf
+apollo_site_database_connection_cidr_ip: 192.168.122.191/24
+# database uri for apollo_flask
+apollo_site_database_uri: "postgresql://{{ apollo_site_database_user }}:\
+    {{ apollo_site_database_password }}@apollosql.urmc-sh.rochester.edu:5432/\
+    {{ apollo_site_database_name }}"
+
+
+
+### Apollo_monitor configuration ###
+# Domain name
+apollo_monitor_domain: dash.apollo-af.org
+# Full root url, with protocol and trailing slash; needed to make redirects work
+apollo_monitor_root_url: https://dash.apollo-af.org/
+# Grafana backend database details
+apollo_monitor_grafana_backend_database_name: grafana
+apollo_monitor_grafana_backend_database_user: grafana
+apollo_monitor_grafana_backend_database_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          63303530356461653632386232326563643931313338636333373964613534656666383430393865
+          6561323037373765646236313536333231616630356233370a336535346665376332353139323862
+          35353361316139333662383332316134653233646264383761323639623964636437373438633237
+          6365303563353864630a353937663266313136343864316236313431623530626334323861333162
+          38666164363431306434346336333965333339656464333432623236626163663133353433356138
+          6338306234366138636566353739336234343934383461303130
+
+### Nginx Configuration ###
+# Server names
+apollo_api_nginx_server_name: auth.apollo-af.org
+apollo_docs_nginx_server_name: docs.apollo-af.org
+apollo_monitor_nginx_server_name: dash.apollo-af.org

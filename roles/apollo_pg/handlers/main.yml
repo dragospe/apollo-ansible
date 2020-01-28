@@ -1,2 +1,6 @@
 ---
 # handlers file for apollo_pg
+- name: restart postgresql
+  systemd:
+    name: postgresql
+    state: restarted

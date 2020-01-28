@@ -27,7 +27,7 @@
 
 - name: Change grafana admin password (ignoring if already changed).
   uri:
-      url: "{{ apollo_monitor_root_url }}/api/admin/users/1/password"
+      url: "{{ apollo_monitor_root_url }}api/admin/users/1/password"
       method: put
       url_username: 'admin'
       url_password: 'admin'

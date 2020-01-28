@@ -9,8 +9,8 @@
 - name: Add/configure user accounts
   include_tasks: user_accounts.yml
 
-- name: Install S3 drivers
-  include_tasks: install_s3.yml
+#- name: Install S3 drivers
+#  include_tasks: install_s3.yml
 
 # TODO: similar for all hosts, not just remote.  (that config was based on RHEL template, need to compare to Debian.)
 

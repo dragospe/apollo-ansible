@@ -10,16 +10,9 @@
 # 
 # Sample entry:
 #   
-#   [apollo_ts]
+# [apollo_ts]
 #   apollo_ts-prod ansible_host=192.168.122.244 ansible_user=peter
 #
 
-[apollo_pg]
-
-[apollo_ts]
-
-[apollo_monitor]
-
-[apollo_scripts]
-
-
+apolloweb ansible_host=192.168.122.191 ansible_user=centos
+apollosql ansible_host=192.168.122.96 ansible_user=centos
