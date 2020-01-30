@@ -72,4 +72,11 @@
       DATABASE_URI = '{{ apollo_site_database_uri }}'
       DATABASE_NAME = '{{ apollo_site_database_name }}'
       DEFAULT_DATABASE_URI = '{{ apollo_site_default_database_uri | default("") }}'
+
+- name: Set SELinux port 8000 type to httpd_t
+  seport:
+    ports: 8000
+    proto: tcp
+    setype: http_port_t
+    state: present
       

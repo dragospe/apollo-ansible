@@ -1,5 +1,0 @@
-- hosts: apollo_monitor
-  roles:
-    - common
-    - apollo_monitor
-  become: yes

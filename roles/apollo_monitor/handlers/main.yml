@@ -5,6 +5,11 @@
     name: grafana-server
     state: restarted
 
+- name: restart nginx
+  systemd:
+    name: nginx
+    state: restarted
+
 - name: update trust anchors
   command: /bin/update-ca-trust
   become: yes

@@ -74,6 +74,18 @@
     owner: postgres
     group: postgres
 
+- name: Add apollo_site to pg_hba.conf
+  postgresql_pg_hba:
+    dest: /var/lib/pgsql/data/pg_hba.conf
+    contype: hostssl
+    users: '{{ apollo_site_database_user }}'
+    source: '{{ apollo_site_database_connection_cidr_ip }}'
+    method: md5
+    databases: '{{ apollo_site_database_name }}'
+    owner: postgres
+    group: postgres
+  notify: reload postgresql
+
 - name: Set postgresql SSL mode to "Require"
   lineinfile:
     path: /var/lib/pgsql/data/postgresql.conf

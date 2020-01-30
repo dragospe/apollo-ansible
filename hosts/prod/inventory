@@ -14,5 +14,5 @@
 #   apollo_ts-prod ansible_host=192.168.122.244 ansible_user=peter
 #
 
-apolloweb ansible_host=192.168.122.191 ansible_user=centos
-apollosql ansible_host=192.168.122.96 ansible_user=centos
+apolloweb ansible_host=apolloweb.urmc-sh.rochester.edu ansible_user=pdragos
+apollosql ansible_host=apollosql.urmc-sh.rochester.edu ansible_user=pdragos

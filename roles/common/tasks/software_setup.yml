@@ -3,17 +3,14 @@
     name:
       - epel-release
     state: present
-  when: ansible_os_family == 'RedHat'
+  when: ansible_distribution == 'CentOS'
 
 - name: install commonly-used software
   package:
     name:
       - git
       - emacs
-      - htop
       - ntp
-      - awscli
-      - "{{ 'python2-pip'  if ansible_os_family == 'RedHat' else 'python-pip' }}"
       - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
       - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
       - policycoreutils-python
@@ -39,10 +36,7 @@
   pip:
     name: pip
     state: latest
-    executable: "{{ item }}"
-  with_items:
-    - pip2
-    - pip3
+    executable: pip
 
 - name: enable ntpd
   service:

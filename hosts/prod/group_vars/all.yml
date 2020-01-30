@@ -1,6 +1,5 @@
 ### Inventory-wide variable declarations ###
 # 
-# See the main README file for explainations of these variables.
 
 lifecycle_state: prod
 
@@ -33,9 +32,10 @@ apollo_monitor_domain: dash.apollo-af.org
 # Full root url, with protocol and trailing slash; needed to make redirects work
 apollo_monitor_root_url: https://dash.apollo-af.org/
 # Grafana backend database details
-apollo_monitor_grafana_backend_database_name: grafana
-apollo_monitor_grafana_backend_database_user: grafana
-apollo_monitor_grafana_backend_database_password: !vault |
+apollo_monitor_postgresql_backend_host: /run/postgresql/
+apollo_monitor_postgresql_backend_database_name: grafana
+apollo_monitor_postgresql_backend_database_username: grafana
+apollo_monitor_postgresql_backend_database_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           63303530356461653632386232326563643931313338636333373964613534656666383430393865
           6561323037373765646236313536333231616630356233370a336535346665376332353139323862

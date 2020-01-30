@@ -68,6 +68,10 @@
     name: nginx
     groups: grafana_socket
     append: yes
+  notify: restart nginx
+
+- name: Flush handlers
+  meta: flush_handlers
 
 - name: Ensure "grafana" user is in "grafana_socket" group
   user:
@@ -75,13 +79,21 @@
     groups: grafana_socket
     append: yes
 
+- name: Set appropriate sockets context
+  sefcontext:
+    target: '/grafana_socket(/.*)?'
+    setype: httpd_var_run_t
+    state: present
 
 - name: Create sockets directory
   file:
-    path: grafana_socket
+    path: /grafana_socket
     owner: root
     group: grafana_socket
-    mode: '2070'
+    mode: '2770'
+    seuser: system_u
+    serole: object_r
+    setype: httpd_var_run_t
     state: directory
 
 

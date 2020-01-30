@@ -27,34 +27,35 @@
     # TODO: in Ubuntu we should set it in /etc/login.defs
     mode: 0644
 
-- name: install some security tools
-  package:
-    name:
-      - fail2ban
-      - clamav
-    state: present
+### Commented because these aren't in the RHEL repos
+#- name: install some security tools
+#  package:
+#    name:
+#      - fail2ban
+#      - clamav
+#    state: present
 
-- name: Create fail2ban jail conf file
-  lineinfile:
-    path: /etc/fail2ban/jail.d/from-ansible.conf
-    line: '### Ansible Managed: Manually entered data may be overwritten ###'
-    create: yes
+#- name: Create fail2ban jail conf file
+#  lineinfile:
+#    path: /etc/fail2ban/jail.d/from-ansible.conf
+#    line: '### Ansible Managed: Manually entered data may be overwritten ###'
+#    create: yes
 
-- name: enable fail2ban ssh jail(s)
-  ini_file:
-    path: /etc/fail2ban/jail.d/from-ansible.conf
-    mode: '644'
-    create: yes
-    section: sshd
-    option: enabled
-    value: 'true'
+#- name: enable fail2ban ssh jail(s)
+#  ini_file:
+#    path: /etc/fail2ban/jail.d/from-ansible.conf
+#    mode: '644'
+#    create: yes
+#    section: sshd
+#    option: enabled
+#    value: 'true'
 
 
-- name: enable fail2ban
-  service:
-    name: fail2ban
-    enabled: yes
-    state: started
+#- name: enable fail2ban
+#  service:
+#    name: fail2ban
+#    enabled: yes
+#    state: started
 
 - name: harden sshd
   copy:

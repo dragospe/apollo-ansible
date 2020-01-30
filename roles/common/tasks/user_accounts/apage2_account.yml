@@ -1,0 +1,60 @@
+
+#- name: create a group for apage2
+#  group:
+#    name: apage2
+#    state: present
+#  become: yes
+
+#- name: create an account for apage2
+#  user:
+#    name: apage2
+#    shell: /bin/bash
+#    password: '$6$cMOXifgpL$1YACgk72wHGm1Y8NzEt63sFjswMNQtw7JLO5g8G0rP55al9kBc4rEZETay2y08Jf0WRC5/FAG4Bdu5DE8sB7.1'
+#    # (use `mkpasswd --method=sha-512` to create password)
+#    groups: "apage2,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
+#    # TODO?: primary group = apage2
+#    append: yes
+#    create_home: yes
+#  become: yes
+
+- name: authorize ssh key for apage2
+  authorized_key:
+    user: apage2
+    state: present
+    key: "{{ lookup('file', 'keys/id_rsa_alex.pub') }}"
+  become: yes
+
+- name: set up git config for apage2
+  block:
+    - name: Set git editor
+      git_config:
+        name: core.editor
+        value: emacs
+        scope: global
+    - name: set git email
+      git_config:
+        name: user.email
+        value: alex_page@urmc.rochester.edu
+        scope: global
+    - name: Set git username
+      git_config:
+        name: user.name
+        value: Alex Page
+        scope: global
+  become: yes
+  become_user: apage2
+
+- name: fix ll alias
+  lineinfile:
+    path: /home/urmc-sh.rochester.edu/apage2/.bashrc
+    line: "alias ll='ls -lah --color=auto'"
+    insertafter: EOF
+  become: yes
+  become_user: apage2
+
+- name: Set emacs as default editor
+  lineinfile:
+    path: /home/urmc-sh.rochester.edu/apage2/.bash_profile
+    line: export EDITOR="emacs"
+  become: yes
+  become_user: apage2

@@ -1,33 +1,33 @@
 
-- name: create a group for Peter
-  group:
-    name: peter
-    state: present
-  become: yes
+#- name: create a group for Peter
+#  group:
+#    name: pdragos
+#    state: present
+#  become: yes
 
-- name: create an account for Peter
-  user:
-    name: peter
-    shell: /bin/bash
-    password: $6$JnCoZLYa$V8TwB3aKl/vTpo/lQA4klAhtZd6e3lM65D32SIn6pYh8UKaoiclxcTRNrD9wEIVM8XL9OSOaNN864.oNObKTg0
+#- name: create an account for Peter
+#  user:
+#    name: pdragos
+#    shell: /bin/bash
+#    password: $6$JnCoZLYa$V8TwB3aKl/vTpo/lQA4klAhtZd6e3lM65D32SIn6pYh8UKaoiclxcTRNrD9wEIVM8XL9OSOaNN864.oNObKTg0
 
 
 
     # (use `mkpasswd --method=sha-512` to create password)
-    groups: "peter,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
-    # TODO?: primary group = peter
-    append: yes
-    create_home: yes
-  become: yes
+#    groups: "pdragos,{{ 'wheel' if ansible_os_family == 'RedHat' else 'sudo' }}"
+#    # TODO?: primary group = pdragos
+#    append: yes
+#    create_home: yes
+#  become: yes
 
-- name: authorize ssh key for Peter
+- name: authorize ssh key for pdragos
   authorized_key:
-    user: peter
+    user: pdragos
     state: present
     key: "{{ lookup('file', 'keys/id_rsa_peter.pub') }}"
   become: yes
 
-- name: set up git config for Peter
+- name: set up git config for pdragos
   block:
     - name: Set git editor
       git_config:
@@ -45,12 +45,12 @@
         value: Peter Dragos
         scope: global
   become: yes
-  become_user: peter
+  become_user: pdragos
 
 - name: fix ll alias
   lineinfile:
-    path: /home/peter/.bashrc
+    path: /home/urmc-sh.rochester.edu/pdragos/.bashrc
     line: "alias ll='ls -lah --color=auto'"
     insertafter: EOF
   become: yes
-  become_user: peter
+  become_user: pdragos

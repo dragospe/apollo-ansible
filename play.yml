@@ -1,5 +1,0 @@
-- name: Configure apollo_scripts with the 'common' and 'apollo_scripts' roles
-  hosts: apollotest 
-  roles: 
-    - common
-  become: yes
