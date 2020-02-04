@@ -103,6 +103,7 @@
 ########################## Second part: create schema ##########################
 
 # TODO: (safe) initialization of db
+# maybe import e.g. 1 month of subject1+2 data for test DB
 
 ########################## Last part: set up backups ###########################
 

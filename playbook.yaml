@@ -78,6 +78,7 @@
   - name: restrict umask
     copy:
       content: "umask 027\n"
+      # TODO: that may actually be too restrictive
       dest: /etc/profile.d/custom_umask.sh
       # TODO: in Ubuntu we should set it in /etc/login.defs
       mode: 0644
