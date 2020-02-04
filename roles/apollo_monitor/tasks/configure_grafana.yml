@@ -39,7 +39,7 @@
     - { section: database, option: type, value: postgres }
     - { section: database, option: host, value: '{{ apollo_monitor_postgresql_backend_host }}' }
     - { section: database, option: name, value: '{{ apollo_monitor_postgresql_backend_database_name }}' }
-    - { section: database, option: user, value: '{{ apollo_monitor_postgresql_backend_database_username }}' }
+    - { section: database, option: user, value: '{{ apollo_monitor_postgresql_backend_database_user }}' }
     - { section: database, option: password, value: '{{ apollo_monitor_postgresql_backend_database_password }}' }
     ### [security] section ###
     - { section: security, option: cookie_secure, value: true }

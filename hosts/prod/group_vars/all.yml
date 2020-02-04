@@ -34,7 +34,7 @@ apollo_monitor_root_url: https://dash.apollo-af.org/
 # Grafana backend database details
 apollo_monitor_postgresql_backend_host: /run/postgresql/
 apollo_monitor_postgresql_backend_database_name: grafana
-apollo_monitor_postgresql_backend_database_username: grafana
+apollo_monitor_postgresql_backend_database_user: grafana
 apollo_monitor_postgresql_backend_database_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           63303530356461653632386232326563643931313338636333373964613534656666383430393865

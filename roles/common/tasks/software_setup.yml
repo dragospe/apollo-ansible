@@ -5,6 +5,10 @@
     state: present
   when: ansible_distribution == 'CentOS'
 
+- name: Enable rhel-7-server-optional-rpms
+  rhsm_repository:
+    name: 'rhel-7-server-optional-rpms'
+
 - name: install commonly-used software
   package:
     name:
@@ -14,6 +18,7 @@
       - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
       - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
       - policycoreutils-python
+      - yum-cron
     state: present
 
 - name: ensure /usr/local/bin is in PATH (for normal login)
