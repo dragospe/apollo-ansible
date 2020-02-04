@@ -21,6 +21,26 @@
       - yum-cron
     state: present
 
+- name: Configure yum-cron.conf for security updates
+  ini_file:
+    path: "{{ item.file }}"
+    section: commands
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  loop:
+    - { file: '/etc/yum/yum-cron.conf', option: 'update_cmd', value: 'security' }
+    - { file: '/etc/yum/yum-cron.conf', option: 'download_updates', value: 'yes' }
+    - { file: '/etc/yum/yum-cron.conf', option: 'apply_updates', value: 'yes' }
+    - { file: '/etc/yum/yum-cron-hourly.conf', option: 'update_cmd', value: 'security' }
+    - { file: '/etc/yum/yum-cron-hourly.conf', option: 'download_updates', value: 'yes' }
+    - { file: '/etc/yum/yum-cron-hourly.conf', option: 'apply_updates', value: 'yes' }
+
+- name: Start and enable yum-cron
+  systemd:
+    name: yum-cron
+    state: started
+    enabled: yes
+
 - name: ensure /usr/local/bin is in PATH (for normal login)
   copy:
     src: custom_path.sh

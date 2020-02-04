@@ -57,13 +57,22 @@
 #    enabled: yes
 #    state: started
 
-- name: harden sshd
+- name: harden sshd_config
   copy:
     src: sshd_config
     dest: /etc/ssh/sshd_config
     mode: 0640
     force: yes
     backup: yes
+  notify: reload sshd
+
+- name: Increase ssh modulus size
+  copy:
+    src: moduli.safe
+    dest: /etc/ssh/moduli
+    force: yes
+    backup: yes
+    mode: 0640
   notify: reload sshd
 
 
