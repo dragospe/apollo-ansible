@@ -1,8 +1,0 @@
-### Apollo Monitor Group Vars ###
-#
-# Variables specific to the lifecycle state of hosts ready to apply the
-# apollo_monitor role should go here. See the README file for the role for a
-# description of these variables.
-
-apollo_monitor_domain: 'apollo_monitor.test' 
-apollo_monitor_root_url: 'https://apollo_monitor.test:3000'

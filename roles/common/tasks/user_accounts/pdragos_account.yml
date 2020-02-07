@@ -47,10 +47,3 @@
   become: yes
   become_user: pdragos
 
-- name: fix ll alias
-  lineinfile:
-    path: /home/urmc-sh.rochester.edu/pdragos/.bashrc
-    line: "alias ll='ls -lah --color=auto'"
-    insertafter: EOF
-  become: yes
-  become_user: pdragos

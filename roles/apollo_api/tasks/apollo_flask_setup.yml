@@ -14,7 +14,7 @@
 
 - name: Ensure the application directory exists
   file:
-   path: /usr/lib/apollo_site
+   path: '{{ apollo_flask_application_directory }}'
    state: directory
    mode: '0700'
    owner: apollo
@@ -22,7 +22,7 @@
 
 - name: Ensure the logging directory exists
   file:
-    path: /var/log/apollo_site
+    path: '{{ apollo_flask_log_directory }}'
     state: directory
     mode: '0700'
     owner: apollo
@@ -30,9 +30,9 @@
 
 - name: pull apollo_flask from bitbucket
   git:
-    dest: "/usr/lib/apollo_site"
-    repo: ssh://git@bitbucket.org/pdragos1/apollo_flask.git
-    version: HEAD
+    dest: '{{ apollo_flask_application_directory }}'
+    repo: '{{ apollo_flask_git_uri }}'
+    version: '{{ apollo_flask_git_version }}'
   become_user: apollo 
 
 - name: Install virtualenv
@@ -43,15 +43,15 @@
 - name: pip3 install apollo_flask
   pip:
     name: .
-    chdir: "/usr/lib/apollo_site"
+    chdir: "{{ apollo_flask_application_directory }}"
     umask: "0022"
-    virtualenv: /usr/lib/apollo_site/venv
+    virtualenv: "{{ apollo_flask_application_directory }}/venv"
     virtualenv_command: '/usr/bin/virtualenv -p python3'
   become_user: apollo
 
 - name: Ensure instance directory exists
   file:
-    path: /usr/lib/apollo_site/instance
+    path: '{{ apollo_flask_application_directory }}/instance'
     state: directory
     owner: apollo
     group: apollo
@@ -60,14 +60,20 @@
 - name: Copy garmin api keys
   copy:
     src: instance_config.py
-    dest: /usr/lib/apollo_site/instance/config.py
+    dest: '{{ apollo_flask_application_directory }}/instance/config.py'
     owner: apollo
     group: apollo
     mode: 0600
 
+- name: Set project name in instance config
+  lineinfile: 
+    path: '{{ apollo_flask_application_directory }}/instance/config.py'
+    insertafter: EOF
+    line: 'PROJECT_NAME = "{{ project_name }}"'
+
 - name: Set database configuration
   blockinfile:
-    path: /usr/lib/apollo_site/instance/config.py
+    path: '{{ apollo_flask_application_directory }}/instance/config.py'
     block: |
       DATABASE_URI = '{{ apollo_site_database_uri }}'
       DATABASE_NAME = '{{ apollo_site_database_name }}'

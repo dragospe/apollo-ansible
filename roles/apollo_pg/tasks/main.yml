@@ -3,9 +3,9 @@
 - name: give APOLLO user full access to APOLLO database
   postgresql_privs:
     type: database
-    database: "apollo_site"
+    database: "{{ apollo_site_database_name }}"
     privs: ALL
-    objs: "apollo_site"
+    objs: "{{ apollo_site_database_name }}"
     roles: apollo
     grant_option: no
     state: present
@@ -14,7 +14,7 @@
 - name: give grafana user read-only access to APOLLO database
   postgresql_privs:
     type: table
-    database: "apollo_site"
+    database: "{{ apollo_site_database_name }}"
     privs: SELECT
     objs: ALL_IN_SCHEMA
     roles: grafana
@@ -25,9 +25,9 @@
 - name: give grafana user TEMP privs on APOLLO database
   postgresql_privs:
     type: database
-    database: "apollo_site"
+    database: "{{ apollo_site_database_name }}"
     privs: TEMP
-    objs: "apollo_site"
+    objs: "{{ apollo_site_database_name }}"
     roles: grafana
     grant_option: no
     state: present
@@ -36,9 +36,9 @@
 - name: revoke public privs to APOLLO database
   postgresql_privs:
     type: database
-    database: "apollo_site"
+    database: "{{ apollo_site_database_name }}"
     privs: ALL
-    objs: "apollo_site"
+    objs: "{{ apollo_site_database_name }}"
     role: PUBLIC
     state: absent      
   become_user: postgres

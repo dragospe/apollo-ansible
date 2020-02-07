@@ -1,21 +1,14 @@
-- name: install EPEL (if redhat)
-  package:
-    name:
-      - epel-release
-    state: present
-  when: ansible_distribution == 'CentOS'
-
 - name: Enable rhel-7-server-optional-rpms
   rhsm_repository:
     name: 'rhel-7-server-optional-rpms'
 
-- name: install commonly-used software
+- name: install commonly-used software for CentOS/RHEL 7
   package:
     name:
       - git
       - emacs
       - ntp
-      - "{{ 'python36-pip' if ansible_os_family == 'RedHat' else 'python3-pip' }}"
+      - python3-pip 
       - "{{ 'mlocate'      if ansible_os_family == 'RedHat' else 'locate' }}"
       - policycoreutils-python
       - yum-cron
@@ -61,7 +54,7 @@
   pip:
     name: pip
     state: latest
-    executable: pip
+    executable: pip3
 
 - name: enable ntpd
   service:

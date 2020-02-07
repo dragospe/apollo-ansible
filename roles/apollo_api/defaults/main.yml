@@ -1,0 +1,4 @@
+apollo_flask_git_uri: ssh://git@bitbucket.org/pdragos1/apollo_flask.git
+apollo_flask_git_version: HEAD
+apollo_flask_application_directory: /usr/lib/apollo_site
+apollo_flask_log_directory: /var/log/apollo_site

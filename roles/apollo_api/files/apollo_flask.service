@@ -1,5 +1,5 @@
 [Unit]
-Description=Apollo-AF Web Application
+Description=Apollo Flask Web Application
 After=network.target
 Wants=nginx.service
 

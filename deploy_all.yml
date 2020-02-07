@@ -94,10 +94,10 @@
             setype: cert_t
   become: yes
             
-# TODO: Remove this
+
 - hosts: apollosql
   tasks: 
-    - name: Hacky SSL work around for apollo-sql 
+    - name: Copy TLS certificates
       block:
         - name: ensure cert directory exists for docs
           file:
@@ -217,7 +217,7 @@
                 ssl: true
                 opts: 
                   - http2
-            ssl: #TODO: Fix this
+            ssl: 
               cert: /etc/ssl/certs/auth.apollo-af.org/fullchain.pem
               key: /etc/ssl/certs/auth.apollo-af.org/privkey.pem
               session_timeout: 1d

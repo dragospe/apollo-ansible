@@ -10,17 +10,9 @@
 # 
 # Sample entry:
 #   
-#   [apollo_ts]
-#   apollo_ts-test ansible_host=192.168.122.244 ansible_user=peter
+#[apollo_ts]
+#apollo_ts-test ansible_host=192.168.122.244 ansible_user=peter
 #
 
-[apollo_pg]
-
-[apollo_ts]
-
-[apollo_monitor]
-dash.apollo-af.org ansible_user=centos
-
-[apollo_scripts]
-
-
+apollosql ansible_host=192.168.122.156 ansible_user=pdragos
+apolloweb ansible_host=192.168.122.11 ansible_user=pdragos
