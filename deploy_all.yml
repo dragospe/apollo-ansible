@@ -36,6 +36,8 @@
   tags: 'apollo_api'
   roles: 
     - 'apollo_api'
+  vars:
+    apollo_flask_log_directory: '/var/log/apollo_flask'
   become: yes
 
 - name: Apply apollo_monitor role

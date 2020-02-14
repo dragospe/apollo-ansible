@@ -27,6 +27,7 @@
   vars:
     postgresql_databases:
         - name: '{{ apollo_site_database_name }}'
+          owner: '{{ apollo_site_database_user }}'
         - name: '{{ apollo_monitor_postgresql_backend_database_name }}'
     postgresql_users:
         - name: '{{ apollo_site_database_user }}'

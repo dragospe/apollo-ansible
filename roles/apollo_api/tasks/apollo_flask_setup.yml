@@ -85,4 +85,12 @@
     proto: tcp
     setype: http_port_t
     state: present
+
+- name: Initialize the database
+  command: /usr/lib/apollo_site/venv/bin/flask init-db
+  args: 
+    chdir: /usr/lib/apollo_site/
+  become_user: apollo
+  become: yes
+
       

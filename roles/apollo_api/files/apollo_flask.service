@@ -5,7 +5,7 @@ Wants=nginx.service
 
 [Service]
 WorkingDirectory=/usr/lib/apollo_site/
-ExecStart=/usr/lib/apollo_site/venv/bin/gunicorn --error-logfile /var/log/apollo_site/gunicorn.errorlog --access-logfile /var/log/apollo_site/gunicorn.accesslog --pid /var/log/apollo_flask/gunicorn.pid -p 8000 wsgi:app
+ExecStart=/usr/lib/apollo_site/venv/bin/gunicorn --error-logfile /var/log/apollo_site/gunicorn.errorlog --access-logfile /var/log/apollo_site/gunicorn.accesslog -p /var/log/apollo_flask/gunicorn.pid wsgi:app -b 127.0.0.1:8000
 ExecStop=/bin/kill -s TERM $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 User=apollo
