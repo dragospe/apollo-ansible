@@ -2,10 +2,10 @@
 # handlers file for apollo_pg
 - name: restart postgresql
   systemd:
-    name: postgresql
+    name: '{{ postgresql_daemon }}'
     state: restarted
 
 - name: reload postgresql
   systemd:
-    name: postgresql
+    name: '{{ postgresql_daemon }}'
     state: reloaded

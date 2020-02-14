@@ -1,0 +1,8 @@
+- name: Setup all servers with `common` software and settings
+  tags: common
+  hosts: 
+    - apolloweb
+    - apollosql
+  roles:
+    - common
+  become: yes

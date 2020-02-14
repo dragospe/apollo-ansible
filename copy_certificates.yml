@@ -1,0 +1,132 @@
+- hosts: apolloweb
+  tasks: 
+    - name: Hacky SSL work around for apollo-web 
+      block:
+        - name: ensure cert directory exists
+          file:
+            path: /etc/ssl/certs/auth.apollo-af.org
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy cert
+          copy:
+            src: auth_cert
+            dest: /etc/ssl/certs/auth.apollo-af.org/fullchain.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy key
+          copy:
+            src: auth_key
+            dest: /etc/ssl/certs/auth.apollo-af.org/privkey.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy DH params
+          copy:
+            src: dhparam_auth
+            dest: /etc/ssl/certs/auth.apollo-af.org/dhparam.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+  become: yes
+            
+
+- hosts: apollosql
+  tasks: 
+    - name: Copy TLS certificates
+      block:
+        - name: ensure cert directory exists for docs
+          file:
+            path: /etc/ssl/certs/docs.apollo-af.org
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: ensure cert directory exists for dash
+          file:
+            path: /etc/ssl/certs/dash.apollo-af.org
+            state: directory
+            owner: root
+            group: root
+            mode: 0755
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy cert for docs
+          copy:
+            src: docs_cert
+            dest: /etc/ssl/certs/docs.apollo-af.org/fullchain.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy key for docs
+          copy:
+            src: docs_key
+            dest: /etc/ssl/certs/docs.apollo-af.org/privkey.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy dhparamas for dash  
+          copy:
+            src: dhparam_dash
+            dest: /etc/ssl/certs/dash.apollo-af.org/dhparam.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy cert for dash
+          copy:
+            src: dash_cert
+            dest: /etc/ssl/certs/dash.apollo-af.org/fullchain.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy key for dash
+          copy:
+            src: dash_key
+            dest: /etc/ssl/certs/dash.apollo-af.org/privkey.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+        - name: copy dhparam for docs 
+          copy:
+            src: dhparam_docs
+            dest: /etc/ssl/certs/docs.apollo-af.org/dhparam.pem
+            owner: root
+            group: root
+            mode: 0600
+            seuser: system_u
+            serole: object_r
+            setype: cert_t
+  become: yes

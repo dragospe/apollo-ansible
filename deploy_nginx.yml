@@ -1,0 +1,197 @@
+- name: Setup apolloweb with nginx role
+  hosts: apolloweb
+  tags: nginx
+  roles: 
+    - 'nginxinc.nginx'
+  become: yes
+  vars:
+    nginx_http_template_enable: true
+    nginx_http_template:
+      default:
+        template_file: http/default.conf.j2
+        conf_file_name: default.conf
+        conf_file_location: /etc/nginx/conf.d/
+        servers:
+          http_redirect:
+            server_name: _
+            listen:
+              listen_80:
+                ip: 0.0.0.0
+                port: 80
+                opts:
+                  - default_server
+            returns: 
+                https_redirect:
+                    location: /
+                    code: 301 
+                    value: https://$host$request_uri
+          apollo_api:
+            server_name: '{{ apollo_api_nginx_server_name }}'
+            listen:
+              listen_all:
+                ip: 0.0.0.0
+                port: 443 
+                ssl: true
+                opts: 
+                  - http2
+            ssl: 
+              cert: /etc/ssl/certs/auth.apollo-af.org/fullchain.pem
+              key: /etc/ssl/certs/auth.apollo-af.org/privkey.pem
+              session_timeout: 1d
+              session_cache: shared:MozSSL:10m
+              disable_session_tickets: true
+              protocols: TLSv1.2 TLSv1.3
+              ciphers: ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+              prefer_server_ciphers: true
+              stapling: true
+              stapling_verify: true
+              trusted_cert: /etc/ssl/certs/ca-bundle.trust.crt
+              dhparam: /etc/ssl/certs/auth.apollo-af.org/dhparam.pem
+            autoindex: false
+            reverse_proxy:
+              locations:
+                homepage:
+                  location: /
+                  proxy_set_header:
+                      header_x_real_ip:
+                        name: X-Real-IP
+                        value: $remote_addr
+                      header_x_forwarded_for:
+                        name: X-Forwarded-For
+                        value: $remote_addr
+                      header_host:
+                        name: Host
+                        value: $host
+                  proxy_pass: http://127.0.0.1:8000
+                  add_headers:
+                    strict_transport_security:
+                      name: Strict-Transport-Security
+                      value: max-age=63072000
+                      always: true
+                    xframe-options:
+                      name: X-Frame-Options
+                      value: DENY
+                api_endpoints:
+                  location: /api_client/garmin/
+                  proxy_set_header:
+                    header_x_real_ip:
+                      name: X-Real-IP
+                      value: $remote_addr
+                    header_x_forwarded_for:
+                      name: X-Forwarded-For
+                      value: $remote_addr
+                    header_host:
+                      name: Host
+                      value: $host
+                  add_headers:
+                    strict_transport_security:
+                      name: Strict-Transport-Security
+                      value: max-age=63072000
+                      always: true
+                    xframe-options:
+                      name: X-Frame-Options
+                      value: DENY
+                  proxy_pass: http://127.0.0.1:8000
+                  allows: #Given from garmin
+                    - 98.100.124.0/24
+                    - 98.100.125.0/24
+                    - 204.77.162.0/24
+                    - 204.77.163.0/24
+                  denies:
+                    - all
+
+- name: Setup apollosql with nginx
+  hosts: apollosql
+  tags: nginx
+  roles:
+    - nginxinc.nginx
+  become: yes
+  vars:
+    nginx_http_template_enable: true
+    nginx_http_template:
+      default:
+        template_file: http/default.conf.j2
+        conf_file_name: default.conf
+        conf_file_location: /etc/nginx/conf.d/
+        servers:
+          http_redirect:
+            server_name: _
+            listen:
+              listen_80:
+                ip: 0.0.0.0
+                port: 80
+                opts :
+                  - default_server
+            returns: 
+                https_redirect:
+                    location: /
+                    code: 301 
+                    value: https://$host$request_uri
+          apollo_docs:
+            server_name: '{{ apollo_docs_nginx_server_name }}'
+            root: /usr/share/nginx/html/apollo_docs
+            ssl: 
+              cert: /etc/ssl/certs/docs.apollo-af.org/fullchain.pem
+              key: /etc/ssl/certs/docs.apollo-af.org/privkey.pem
+              session_timeout: 1d
+              session_cache: shared:MozSSL:10m
+              disable_session_tickets: true
+              protocols: TLSv1.2 TLSv1.3
+              ciphers: ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+              prefer_server_ciphers: true
+              stapling: true
+              stapling_verify: true
+              trusted_cert: /etc/ssl/certs/ca-bundle.trust.crt
+              dhparam: /etc/ssl/certs/docs.apollo-af.org/dhparam.pem
+            listen:
+              listen_all:
+                ip: 0.0.0.0
+                port: 443
+                ssl: true
+                opts:
+                  - http2
+          apollo_monitor:
+            server_name: '{{ apollo_monitor_nginx_server_name }}'
+            ssl: 
+              cert: /etc/ssl/certs/dash.apollo-af.org/fullchain.pem
+              key: /etc/ssl/certs/dash.apollo-af.org/privkey.pem
+              session_timeout: 1d
+              session_cache: shared:MozSSL:10m
+              disable_session_tickets: true
+              protocols: TLSv1.2 TLSv1.3
+              ciphers: ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+              prefer_server_ciphers: true
+              stapling: true
+              stapling_verify: true
+              trusted_cert: /etc/ssl/certs/ca-bundle.trust.crt
+              dhparam: /etc/ssl/certs/dash.apollo-af.org/dhparam.pem
+            listen:
+              listen_all:
+                ip: 0.0.0.0
+                port: 443
+                ssl: true
+                opts:
+                  - http2
+            reverse_proxy:
+              locations:
+                homepage:
+                  location: /
+                  proxy_set_header:
+                    header_x_real_ip:
+                      name: X-Real-IP
+                      value: $remote_addr
+                    header_x_forwarded_for:
+                      name: X-Forwarded-For
+                      value: $remote_addr
+                    header_host:
+                      name: Host
+                      value: $host
+                  proxy_pass: http://unix:/grafana_socket/grafana.socket:/
+                  add_headers:
+                    strict_transport_security:
+                      name: Strict-Transport-Security
+                      value: max-age=63072000
+                      always: true
+                    xframe-options:
+                      name: X-Frame-Options
+                      value: DENY

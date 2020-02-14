@@ -19,13 +19,14 @@ apollo_site_database_password: !vault |
           63396466313065663838363066356466666363656636306366666130663566646431376466373734
           3734346262366164616664636138653631653836326339323437
 # IP that should be whitelisted for apollo_site in pg_hba.conf
-apollo_site_database_connection_cidr_ip: 192.168.122.191/24
+apollo_site_database_connection_cidr_ip: 192.168.122.11/24
 # database uri for apollo_flask
 apollo_site_database_uri: "postgresql://{{ apollo_site_database_user }}:\
     {{ apollo_site_database_password }}@apollosql.urmc-sh.rochester.edu:5432/\
     {{ apollo_site_database_name }}"
-
-
+apollo_site_default_database_uri: "postgresql://{{ apollo_site_database_user }}:\
+    {{ apollo_site_database_password }}@apollosql.urmc-sh.rochester.edu:5432/\
+    postgres"
 
 ### Apollo_monitor configuration ###
 # Domain name
@@ -54,3 +55,18 @@ apollo_monitor_nginx_server_name: dash.apollo-af.org
 
 ### apollo_flask git configuration
 apollo_flask_git_version: parameterize_project_name
+
+postgresql_enablerepo: pgdg12
+
+### Enable postgresql 12
+__postgresql_version: "9.2"
+__postgresql_data_dir: "/var/lib/pgsql/data"
+__postgresql_bin_path: "/usr/bin"
+__postgresql_config_path: "/var/lib/pgsql/data"
+__postgresql_daemon: postgresql
+__postgresql_packages:
+  - postgresql
+  - postgresql-server
+  - postgresql-contrib
+  - postgresql-libs
+

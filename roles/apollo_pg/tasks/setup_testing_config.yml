@@ -1,0 +1,29 @@
+- name: Add apollo_site to pg_hba.conf for all databases
+  postgresql_pg_hba:
+    dest: '{{ postgresql_data_dir }}/pg_hba.conf'
+    contype: hostssl
+    users: '{{ apollo_site_database_user }}'
+    source: '{{ apollo_site_database_connection_cidr_ip }}'
+    method: md5
+    databases: all
+    owner: postgres
+    group: postgres
+  notify: reload postgresql
+
+- name: give apollo user full access to postgres database
+  postgresql_privs:
+    type: database
+    database: postgres
+    privs: ALL
+    objs: postgres
+    roles: apollo
+    grant_option: no
+    state: present
+  become_user: postgres
+
+- name: give apollo user the "CREATEDB" flag
+  postgresql_user:
+    login_user: postgres
+    name: apollo
+    role_attr_flags: 'CREATEDB'
+  become_user: postgres

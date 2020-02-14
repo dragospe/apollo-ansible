@@ -53,7 +53,7 @@
 - name: Copy ssl key
   copy:
     src: server.key
-    dest: /var/lib/pgsql/data/server.key
+    dest: '{{ postgresql_data_dir }}/server.key'
     mode: '0400'
     owner: postgres
     group: postgres
@@ -61,7 +61,7 @@
 - name: Copy root certificate
   copy:
     src: root.crt
-    dest: /var/lib/pgsql/data/root.crt
+    dest: '{{ postgresql_data_dir }}/root.crt'
     mode: '0400'
     owner: postgres
     group: postgres
@@ -69,14 +69,14 @@
 - name: Copy server certificate
   copy: 
     src: server.crt
-    dest: /var/lib/pgsql/data/server.crt
+    dest: '{{ postgresql_data_dir }}/server.crt'
     mode: '0400'
     owner: postgres
     group: postgres
 
 - name: Add apollo_site to pg_hba.conf
   postgresql_pg_hba:
-    dest: /var/lib/pgsql/data/pg_hba.conf
+    dest: '{{ postgresql_data_dir }}/pg_hba.conf'
     contype: hostssl
     users: '{{ apollo_site_database_user }}'
     source: '{{ apollo_site_database_connection_cidr_ip }}'
@@ -88,10 +88,14 @@
 
 - name: Set postgresql SSL mode to "Require"
   lineinfile:
-    path: /var/lib/pgsql/data/postgresql.conf
+    path: '{{ postgresql_data_dir }}/postgresql.conf'
     line: 'ssl = on'
     insertafter: EOF
   notify: restart postgresql
+
+- name: Setup testing configuration
+  include: setup_testing_config.yml
+  when: lifecycle_state == 'test'
 
 # TODO: revoke apollodevdb privs as well?  or just remove from template0/1 at
 # the start?
