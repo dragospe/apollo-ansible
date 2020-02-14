@@ -4,8 +4,8 @@ After=network.target
 Wants=nginx.service
 
 [Service]
-WorkingDirectory=/usr/lib/apollo_site/
-ExecStart=/usr/lib/apollo_site/venv/bin/gunicorn --error-logfile /var/log/apollo_site/gunicorn.errorlog --access-logfile /var/log/apollo_site/gunicorn.accesslog -p /var/log/apollo_flask/gunicorn.pid wsgi:app -b 127.0.0.1:8000
+WorkingDirectory=/usr/lib/apollo_site/venv/lib/python3.6/site-packages/
+ExecStart=/usr/lib/apollo_site/venv/bin/gunicorn --error-logfile /var/log/apollo_site/gunicorn.errorlog --access-logfile /var/log/apollo_site/gunicorn.accesslog -p /var/log/apollo_flask/gunicorn.pid --bind=127.0.0.1:8000 apollo_flask:create_app() 
 ExecStop=/bin/kill -s TERM $MAINPID
 ExecReload=/bin/kill -s HUP $MAINPID
 User=apollo

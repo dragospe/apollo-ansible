@@ -49,31 +49,31 @@
     virtualenv_command: '/usr/bin/virtualenv -p python3'
   become_user: apollo
 
-- name: Ensure instance directory exists
+- name: Ensure instance folder exists
   file:
-    path: '{{ apollo_flask_application_directory }}/instance'
+    path: '{{ apollo_flask_application_directory }}/venv/var/apollo_flask-instance/' 
     state: directory
     owner: apollo
-    group: apollo
+    group: users 
     mode: 0700
 
 - name: Copy garmin api keys
   copy:
     src: instance_config.py
-    dest: '{{ apollo_flask_application_directory }}/instance/config.py'
+    dest: '{{ apollo_flask_application_directory }}/venv/var/apollo_flask-instance/config.py'
     owner: apollo
     group: apollo
     mode: 0600
 
 - name: Set project name in instance config
   lineinfile: 
-    path: '{{ apollo_flask_application_directory }}/instance/config.py'
+    path: '{{ apollo_flask_application_directory }}/venv/var/apollo_flask-instance/config.py'
     insertafter: EOF
     line: 'PROJECT_NAME = "{{ project_name }}"'
 
 - name: Set database configuration
   blockinfile:
-    path: '{{ apollo_flask_application_directory }}/instance/config.py'
+    path: '{{ apollo_flask_application_directory }}/venv/var/apollo_flask-instance/config.py'
     block: |
       DATABASE_URI = '{{ apollo_site_database_uri }}'
       DATABASE_NAME = '{{ apollo_site_database_name }}'
@@ -87,9 +87,9 @@
     state: present
 
 - name: Initialize the database
-  command: /usr/lib/apollo_site/venv/bin/flask init-db
-  args: 
-    chdir: /usr/lib/apollo_site/
+  command: '{{ apollo_flask_application_directory }}/venv/bin/flask init-db'
+  environment:
+    FLASK_APP: '{{ apollo_flask_application_directory}}/venv/lib/python3.6/site-packages/apollo_flask/__init__:create_app'
   become_user: apollo
   become: yes
 

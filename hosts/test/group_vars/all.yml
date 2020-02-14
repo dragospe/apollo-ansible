@@ -6,7 +6,7 @@ project_name: 'APOLLO-TEST'
 
 ### Apollo_site database configuration ###
 # Name of the database the flask app will use to store data
-apollo_site_database_name: apollo_test_site
+apollo_site_database_name: apollo_site.test
 # postgres user that SQLalchemy will connect as
 apollo_site_database_user: apollo
 # postgres password
@@ -51,10 +51,6 @@ apollo_monitor_postgresql_backend_database_password: !vault |
 apollo_api_nginx_server_name: auth.apollo-af.org
 apollo_docs_nginx_server_name: docs.apollo-af.org
 apollo_monitor_nginx_server_name: dash.apollo-af.org
-
-
-### apollo_flask git configuration
-apollo_flask_git_version: parameterize_project_name
 
 postgresql_enablerepo: pgdg12
 
