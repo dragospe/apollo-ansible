@@ -75,7 +75,22 @@
     mode: 0640
   notify: reload sshd
 
+- name: add ICMP block 'timestamp-request' to the firewall
+  firewalld:
+    zone: public
+    state: enabled
+    permanent: yes
+    immediate: yes
+    icmp_block: timestamp-request
 
+- name: add ICMP block 'timestamp-replay' to the firewall
+  firewalld:
+    zone: public
+    state: enabled
+    permanent: yes
+    immediate: yes
+    icmp_block: timestamp-reply
+#
 # TODO: auto-update clamav data
 # TODO: Auter or unattended-upgrade/yum-cron.  careful not to clobber chrome
 # or auto-reboot a (local) machine.
