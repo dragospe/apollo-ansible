@@ -6,7 +6,7 @@ project_name: 'APOLLO-TEST'
 
 ### Apollo_site database configuration ###
 # Name of the database the flask app will use to store data
-apollo_site_database_name: apollo_site.test
+apollo_site_database_name: apollo_site_test
 # postgres user that SQLalchemy will connect as
 apollo_site_database_user: apollo
 # postgres password

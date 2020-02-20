@@ -13,6 +13,7 @@
 - name: Install and configure nginx 
   import_playbook: deploy_nginx.yml
   tags: nginx
+  become: yes
 
 - hosts: apolloweb, apollosql
   tasks:
@@ -36,8 +37,6 @@
   tags: 'apollo_api'
   roles: 
     - 'apollo_api'
-  vars:
-    apollo_flask_log_directory: '/var/log/apollo_flask'
   become: yes
 
 - name: Apply apollo_monitor role

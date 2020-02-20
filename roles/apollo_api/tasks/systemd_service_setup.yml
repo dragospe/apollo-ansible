@@ -1,7 +1,13 @@
 - name: Copy the systemd service
-  copy:
-    src: apollo_flask.service
-    dest: /etc/systemd/system
+  template:
+    src: apollo_flask.service.j2
+    dest: /etc/systemd/system/apollo_flask.service
+    owner: root
+    group: root
+    seuser: system_u
+    serole: object_r
+    setype: systemd_unit_file_t
+    mode: 07400
 
 - name: Start and enable apollo_flask.service
   systemd: 

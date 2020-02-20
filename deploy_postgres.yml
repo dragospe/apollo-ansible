@@ -17,6 +17,7 @@
             - postgresql12-server
             - postgresql12-contrib
             - postgresql12-libs
+  become: yes
 
 - name: Setup apollosql with `geerlingguy.postgresql` role
   hosts:

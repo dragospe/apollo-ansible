@@ -1,0 +1,17 @@
+[Unit]
+Description=Apollo Flask Web Application for {{ project_name }}
+After=network.target
+Wants=nginx.service
+
+[Service]
+WorkingDirectory={{ apollo_flask_application_directory }}/venv/lib/python3.6/site-packages/
+ExecStart={{ apollo_flask_application_directory }}/venv/bin/gunicorn --error-logfile {{ apollo_flask_log_directory }}/gunicorn.errorlog --access-logfile {{ apollo_flask_log_directory }}/gunicorn.accesslog -p {{ apollo_flask_log_directory }}/gunicorn.pid --bind=127.0.0.1:8000 apollo_flask:create_app() 
+ExecStop=/bin/kill -s TERM $MAINPID
+ExecReload=/bin/kill -s HUP $MAINPID
+User=apollo
+Group=apollo
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target  
