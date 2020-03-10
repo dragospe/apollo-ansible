@@ -4,6 +4,8 @@
 lifecycle_state: test
 project_name: 'APOLLO-TEST'
 
+apollo_flask_git_version: 'lint-a-palooza'
+
 ### Apollo_site database configuration ###
 # Name of the database the flask app will use to store data
 apollo_site_database_name: apollo_site_test

@@ -2,6 +2,7 @@
 # 
 
 lifecycle_state: prod
+project_name: 'APOLLO-PROD'
 
 ### Apollo_site database configuration ###
 # Name of the database the flask app will use to store data
@@ -18,12 +19,14 @@ apollo_site_database_password: !vault |
           63396466313065663838363066356466666363656636306366666130663566646431376466373734
           3734346262366164616664636138653631653836326339323437
 # IP that should be whitelisted for apollo_site in pg_hba.conf
-apollo_site_database_connection_cidr_ip: 192.168.122.191/24
+apollo_site_database_connection_cidr_ip: 10.221.3.133
 # database uri for apollo_flask
 apollo_site_database_uri: "postgresql://{{ apollo_site_database_user }}:\
     {{ apollo_site_database_password }}@apollosql.urmc-sh.rochester.edu:5432/\
     {{ apollo_site_database_name }}"
-
+apollo_site_default_database_uri: "postgresql://{{ apollo_site_database_user }}:\
+    {{ apollo_site_database_password }}@apollosql.urmc-sh.rochester.edu:5432/\
+    postgres"
 
 
 ### Apollo_monitor configuration ###
@@ -49,3 +52,5 @@ apollo_monitor_postgresql_backend_database_password: !vault |
 apollo_api_nginx_server_name: auth.apollo-af.org
 apollo_docs_nginx_server_name: docs.apollo-af.org
 apollo_monitor_nginx_server_name: dash.apollo-af.org
+
+postgresql_enablerepo: pgdg12

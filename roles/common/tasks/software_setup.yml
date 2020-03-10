@@ -2,6 +2,10 @@
   rhsm_repository:
     name: 'rhel-7-server-optional-rpms'
 
+- name: Enable rhel-7-server-extras-rpms
+  rhsm_repository:
+    name: 'rhel-7-server-extras-rpms'
+
 - name: install commonly-used software for CentOS/RHEL 7
   package:
     name:

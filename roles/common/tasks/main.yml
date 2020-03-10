@@ -8,6 +8,8 @@
 
 - name: Add/configure user accounts
   include_tasks: user_accounts.yml
+  when: lifecycle_state != "prod" #prod uses AD
+  
 
 #- name: Install S3 drivers
 #  include_tasks: install_s3.yml
