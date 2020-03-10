@@ -147,7 +147,7 @@
 - name: mount S3 bucket
   mount:
     path: /mnt/s3
-    src: 's3fs#smd-apollo-test'  # TODO: may get renamed
+    src: 's3fs#smd-apollo-test'  # TODO: should be like "s3fs#smd-apollo-{{s3_mode}}"
     fstype: fuse
     opts: _netdev,allow_other
     state: mounted
